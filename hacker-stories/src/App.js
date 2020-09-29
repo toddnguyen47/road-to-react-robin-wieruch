@@ -6,25 +6,6 @@ const welcome = {
   title: "React",
 };
 
-const list = [
-  {
-    title: "React",
-    url: "https://reactjs.org/",
-    author: "Jordan Walke",
-    num_comments: 3,
-    points: 4,
-    objectID: 0,
-  },
-  {
-    title: "Redux",
-    url: "https://redux.js.org/",
-    author: "Dan Abramov, Andrew Clark",
-    num_comments: 2,
-    points: 5,
-    objectID: 1,
-  },
-];
-
 /**
  *
  * @param {String} title
@@ -33,10 +14,12 @@ function getTitle(title) {
   return "| " + title + " |";
 }
 
-function List() {
+// const List = (props) => {
+function List(props) {
+  let listStories = props.list;
   return (
     <div>
-      {list.map((item) => {
+      {listStories.map((item) => {
         /// Return a component for the particular `item`
         return (
           <div key={item.objectID}>
@@ -58,6 +41,25 @@ function List() {
  * Everything outside is the global space!
  */
 const App = () => {
+  const stories = [
+    {
+      title: "React",
+      url: "https://reactjs.org/",
+      author: "Jordan Walke",
+      num_comments: 3,
+      points: 4,
+      objectID: 0,
+    },
+    {
+      title: "Redux",
+      url: "https://redux.js.org/",
+      author: "Dan Abramov, Andrew Clark",
+      num_comments: 2,
+      points: 5,
+      objectID: 1,
+    },
+  ];
+
   const handleChange = (event) => {
     console.log(event.target.value);
   };
@@ -78,7 +80,7 @@ const App = () => {
 
       <hr />
 
-      <List />
+      <List list={stories} />
     </div>
   );
 };
