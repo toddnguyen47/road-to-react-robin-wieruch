@@ -53,11 +53,15 @@ function List() {
   );
 }
 
-const handleChange = (event) => {
-  console.log(event.target.value);
-};
-
+/**
+ * This is the `App` component.
+ * Everything outside is the global space!
+ */
 const App = () => {
+  const handleChange = (event) => {
+    console.log(event.target.value);
+  };
+
   return (
     <div>
       <div>
