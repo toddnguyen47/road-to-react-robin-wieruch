@@ -36,7 +36,8 @@ function getTitle(title) {
 function List() {
   return (
     <div>
-      {list.map(function (item) {
+      {list.map((item) => {
+        /// Return a component for the particular `item`
         return (
           <div key={item.objectID}>
             <ul>
@@ -52,7 +53,7 @@ function List() {
   );
 }
 
-function App() {
+const App = () => {
   return (
     <div>
       <div>
@@ -72,6 +73,6 @@ function App() {
       <List />
     </div>
   );
-}
+};
 
 export default App;
