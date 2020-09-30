@@ -37,7 +37,7 @@ function List(props) {
 }
 
 const Search = (props) => {
-  const [searchTerm, setSearchTerm] = React.useState();
+  const [searchTerm, setSearchTerm] = React.useState("");
   const handleInputChange = (event) => {
     setSearchTerm(event.target.value);
 
