@@ -36,6 +36,34 @@ function List(props) {
   );
 }
 
+const Search = (props) => {
+  const [searchTerm, setSearchTerm] = React.useState();
+  const handleInputChange = (event) => {
+    setSearchTerm(event.target.value);
+
+    // (B) Use the callback function
+    props.onSearch(event);
+  };
+
+  return (
+    <div>
+      {/* <h1>Hello {title}</h1> */}
+      <h1>
+        {welcome.greeting} {welcome.title}
+      </h1>
+
+      <h1>Hello {getTitle("React")}</h1>
+
+      <label htmlFor="search">Search: </label>
+      <input id="search" type="text" onChange={handleInputChange} />
+
+      <p>
+        Searching for: '<strong>{searchTerm}</strong>'
+      </p>
+    </div>
+  );
+};
+
 /**
  * This is the `App` component.
  * Everything outside is the global space!
@@ -60,32 +88,17 @@ const App = () => {
     },
   ];
 
-  const [searchTerm, setSearchTerm] = React.useState();
-
-  const handleInputChange = (event) => {
+  // (A) Introduce callback function. Pass this function via `props`
+  const handleSearch = (event) => {
+    // (C) Calls back to the place where it was introduced
     console.log(event.target.value);
-    setSearchTerm(event.target.value);
   };
 
   return (
     <div>
-      <div>
-        {/* <h1>Hello {title}</h1> */}
-        <h1>
-          {welcome.greeting} {welcome.title}
-        </h1>
-
-        <h1>Hello {getTitle("React")}</h1>
-
-        <label htmlFor="search">Search: </label>
-        <input id="search" type="text" onChange={handleInputChange} />
-
-        <p>
-          Searching for: '<strong>{searchTerm}</strong>'
-        </p>
-      </div>
-
       <hr />
+
+      <Search onSearch={handleSearch} />
 
       <List list={stories} />
     </div>
