@@ -37,14 +37,7 @@ function List(props) {
 }
 
 const Search = (props) => {
-  const [searchTerm, setSearchTerm] = React.useState("");
-  const handleInputChange = (event) => {
-    setSearchTerm(event.target.value);
-
-    // (B) Use the callback function
-    props.onSearch(event);
-  };
-
+  // (B) Use the callback function
   return (
     <div>
       {/* <h1>Hello {title}</h1> */}
@@ -55,10 +48,10 @@ const Search = (props) => {
       <h1>Hello {getTitle("React")}</h1>
 
       <label htmlFor="search">Search: </label>
-      <input id="search" type="text" onChange={handleInputChange} />
+      <input id="search" type="text" onChange={props.onSearch} />
 
       <p>
-        Searching for: '<strong>{searchTerm}</strong>'
+        The Search Term is: <strong>'{props.searchTerm}'</strong>
       </p>
     </div>
   );
@@ -88,19 +81,26 @@ const App = () => {
     },
   ];
 
+  const [searchTerm, setSearchTerm] = React.useState("");
+
   // (A) Introduce callback function. Pass this function via `props`
   const handleSearch = (event) => {
     // (C) Calls back to the place where it was introduced
-    console.log(event.target.value);
+    // console.log(event.target.value);
+    setSearchTerm(event.target.value);
   };
+
+  const searchStories = stories.filter((story) => {
+    return story.title.toLowerCase().includes(searchTerm.toLowerCase());
+  });
 
   return (
     <div>
       <hr />
 
-      <Search onSearch={handleSearch} />
+      <Search onSearch={handleSearch} searchTerm={searchTerm} />
 
-      <List list={stories} />
+      <List list={searchStories} />
     </div>
   );
 };
