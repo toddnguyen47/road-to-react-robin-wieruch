@@ -37,6 +37,8 @@ function List(props) {
 }
 
 const Search = (props) => {
+  console.log("In Search Component");
+  console.log(props);
   // (B) Use the callback function
   return (
     <div>
@@ -48,7 +50,12 @@ const Search = (props) => {
       <h1>Hello {getTitle("React")}</h1>
 
       <label htmlFor="search">Search: </label>
-      <input id="search" type="text" onChange={props.onSearch} />
+      <input
+        id="search"
+        type="text"
+        onChange={props.onSearch}
+        value={props.searchTerm}
+      />
 
       <p>
         The Search Term is: <strong>'{props.searchTerm}'</strong>
@@ -81,12 +88,11 @@ const App = () => {
     },
   ];
 
-  const [searchTerm, setSearchTerm] = React.useState("");
+  const [searchTerm, setSearchTerm] = React.useState("React");
 
   // (A) Introduce callback function. Pass this function via `props`
   const handleSearch = (event) => {
     // (C) Calls back to the place where it was introduced
-    // console.log(event.target.value);
     setSearchTerm(event.target.value);
   };
 
