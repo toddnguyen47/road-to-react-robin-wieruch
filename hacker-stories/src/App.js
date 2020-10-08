@@ -36,9 +36,17 @@ function List(props) {
   );
 }
 
-const Search = (props) => {
-  console.log("In Search Component");
-  console.log(props);
+// /** Passing in a full props javascript object */
+// const Search = (props) => {
+
+/** Destructuring in the function parameter! */
+const Search = ({ onSearch, searchTerm }) => {
+  // console.log("In Search Component");
+  // console.log(props);
+
+  // // Object destructuring
+  // const { onSearch, searchTerm } = props;
+
   // (B) Use the callback function
   return (
     <div>
@@ -50,15 +58,10 @@ const Search = (props) => {
       <h1>Hello {getTitle("React")}</h1>
 
       <label htmlFor="search">Search: </label>
-      <input
-        id="search"
-        type="text"
-        onChange={props.onSearch}
-        value={props.searchTerm}
-      />
+      <input id="search" type="text" onChange={onSearch} value={searchTerm} />
 
       <p>
-        The Search Term is: <strong>'{props.searchTerm}'</strong>
+        The Search Term is: <strong>'{searchTerm}'</strong>
       </p>
     </div>
   );
