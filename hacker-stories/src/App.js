@@ -15,26 +15,30 @@ function getTitle(title) {
 }
 
 // const List = (props) => {
-function List(props) {
-  let listStories = props.list;
+function List({ list }) {
+  // let listStories = props.list;
   return (
     <div>
-      {listStories.map((item) => {
-        /// Return a component for the particular `item`
-        return (
-          <div key={item.objectID}>
-            <ul>
-              <a href={item.url}>{item.title}</a>
-              <li>Author: {item.author}</li>
-              <li>Number of Comments: {item.num_comments}</li>
-              <li>Points: {item.points}</li>
-            </ul>
-          </div>
-        );
+      {list.map(({ objectID, ...item }) => {
+        // list.map() uses `rest` operation
+        // {...item} uses `spread` operation
+        // Return a component for the particular `item`
+        return <Item key={objectID} {...item} />;
       })}
     </div>
   );
 }
+
+const Item = ({ title, url, author, num_comments, points }) => {
+  return (
+    <ul>
+      <a href={url}>{title}</a>
+      <li>Author: {author}</li>
+      <li>Number of Comments: {num_comments}</li>
+      <li>Points: {points}</li>
+    </ul>
+  );
+};
 
 // /** Passing in a full props javascript object */
 // const Search = (props) => {
