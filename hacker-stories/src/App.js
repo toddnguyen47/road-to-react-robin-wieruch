@@ -17,25 +17,29 @@ function getTitle(title) {
 // const List = (props) => {
 function List({ list }) {
   // let listStories = props.list;
+
+  // {{list.map(({ objectID, ...item }) => {
+  //   // list.map() uses `rest` operation
+  //   // {...item} uses `spread` operation
+  //   // Return a component for the particular `item`
+  //   return <Item key={objectID} {...item} />;
+  // })}}
   return (
     <div>
-      {list.map(({ objectID, ...item }) => {
-        // list.map() uses `rest` operation
-        // {...item} uses `spread` operation
-        // Return a component for the particular `item`
-        return <Item key={objectID} {...item} />;
+      {list.map((item) => {
+        return <Item key={item.objectID} item={item} />;
       })}
     </div>
   );
 }
 
-const Item = ({ title, url, author, num_comments, points }) => {
+const Item = ({ item }) => {
   return (
     <ul>
-      <a href={url}>{title}</a>
-      <li>Author: {author}</li>
-      <li>Number of Comments: {num_comments}</li>
-      <li>Points: {points}</li>
+      <a href={item.url}>{item.title}</a>
+      <li>Author: {item.author}</li>
+      <li>Number of Comments: {item.num_comments}</li>
+      <li>Points: {item.points}</li>
     </ul>
   );
 };
