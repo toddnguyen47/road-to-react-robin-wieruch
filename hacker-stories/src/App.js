@@ -99,7 +99,14 @@ const App = () => {
     },
   ];
 
-  const [searchTerm, setSearchTerm] = React.useState("React");
+  const [searchTerm, setSearchTerm] = React.useState(
+    localStorage.getItem("searchKey") || "React"
+  );
+
+  React.useEffect(() => {
+    // Store in localStorage every time searchTerm is changed
+    localStorage.setItem("searchKey", searchTerm);
+  }, [searchTerm]);
 
   // (A) Introduce callback function. Pass this function via `props`
   const handleSearch = (event) => {
