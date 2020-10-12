@@ -76,6 +76,28 @@ const Search = ({ onSearch, searchTerm }) => {
 };
 
 /**
+ * 
+ * @param {String} key 
+ * @param {*} initialState 
+ * @returns [String, Function]
+ */
+const useSemiPersistentState = (key, initialState) => {
+  const [value, setValue] = React.useState(
+    localStorage.getItem(key) || initialState
+  );
+
+  /** We will need to monitor both `key` and `value`
+   * In case `key` changes outside this hook
+   */
+  React.useEffect(() => {
+    // Store in localStorage every time searchTerm is changed
+    localStorage.setItem(key, value);
+  }, [key, value]);
+
+  return [value, setValue];
+}
+
+/**
  * This is the `App` component.
  * Everything outside is the global space!
  */
@@ -98,15 +120,8 @@ const App = () => {
       objectID: 1,
     },
   ];
-
-  const [searchTerm, setSearchTerm] = React.useState(
-    localStorage.getItem("searchKey") || "React"
-  );
-
-  React.useEffect(() => {
-    // Store in localStorage every time searchTerm is changed
-    localStorage.setItem("searchKey", searchTerm);
-  }, [searchTerm]);
+  
+  const [searchTerm, setSearchTerm] = useSemiPersistentState("searchKey");
 
   // (A) Introduce callback function. Pass this function via `props`
   const handleSearch = (event) => {
