@@ -50,11 +50,11 @@ const Item = ({ item }) => {
 /** Destructuring in the function parameter! */
 const InputWithLabel = ({
   id,
-  label,
   type = "text",
   onChangeHandler,
   value,
   outputString,
+  children,
 }) => {
   // console.log("In Search Component");
   // console.log(props);
@@ -65,7 +65,7 @@ const InputWithLabel = ({
   // (B) Use the callback function
   return (
     <>
-      <label htmlFor={id}>{label}</label>
+      <label htmlFor={id}>{children}</label>
       <input id={id} type={type} onChange={onChangeHandler} value={value} />
 
       <p>
@@ -121,7 +121,10 @@ const App = () => {
     },
   ];
 
-  const [searchTerm, setSearchTerm] = useSemiPersistentState("searchKey");
+  const [searchTerm, setSearchTerm] = useSemiPersistentState(
+    "searchKey",
+    "React"
+  );
 
   // (A) Introduce callback function. Pass this function via `props`
   const handleSearch = (event) => {
@@ -145,11 +148,12 @@ const App = () => {
 
       <InputWithLabel
         id="search"
-        label="Search: "
         onChangeHandler={handleSearch}
         value={searchTerm}
         outputString="The Search Term is: "
-      />
+      >
+        <strong>Search: &nbsp;</strong>
+      </InputWithLabel>
 
       <List list={searchStories} />
     </div>
