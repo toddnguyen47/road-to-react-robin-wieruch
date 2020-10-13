@@ -57,7 +57,7 @@ const Search = ({ onSearch, searchTerm }) => {
 
   // (B) Use the callback function
   return (
-    <div>
+    <>
       {/* <h1>Hello {title}</h1> */}
       <h1>
         {welcome.greeting} {welcome.title}
@@ -71,7 +71,7 @@ const Search = ({ onSearch, searchTerm }) => {
       <p>
         The Search Term is: <strong>'{searchTerm}'</strong>
       </p>
-    </div>
+    </>
   );
 };
 
