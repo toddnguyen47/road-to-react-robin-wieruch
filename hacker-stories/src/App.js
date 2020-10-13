@@ -48,7 +48,14 @@ const Item = ({ item }) => {
 // const Search = (props) => {
 
 /** Destructuring in the function parameter! */
-const Search = ({ onSearch, searchTerm }) => {
+const InputWithLabel = ({
+  id,
+  label,
+  type = "text",
+  onChangeHandler,
+  value,
+  outputString,
+}) => {
   // console.log("In Search Component");
   // console.log(props);
 
@@ -58,27 +65,20 @@ const Search = ({ onSearch, searchTerm }) => {
   // (B) Use the callback function
   return (
     <>
-      {/* <h1>Hello {title}</h1> */}
-      <h1>
-        {welcome.greeting} {welcome.title}
-      </h1>
-
-      <h1>Hello {getTitle("React")}</h1>
-
-      <label htmlFor="search">Search: </label>
-      <input id="search" type="text" onChange={onSearch} value={searchTerm} />
+      <label htmlFor={id}>{label}</label>
+      <input id={id} type={type} onChange={onChangeHandler} value={value} />
 
       <p>
-        The Search Term is: <strong>'{searchTerm}'</strong>
+        {outputString} <strong>'{value}'</strong>
       </p>
     </>
   );
 };
 
 /**
- * 
- * @param {String} key 
- * @param {*} initialState 
+ *
+ * @param {String} key
+ * @param {*} initialState
  * @returns [String, Function]
  */
 const useSemiPersistentState = (key, initialState) => {
@@ -95,7 +95,7 @@ const useSemiPersistentState = (key, initialState) => {
   }, [key, value]);
 
   return [value, setValue];
-}
+};
 
 /**
  * This is the `App` component.
@@ -120,7 +120,7 @@ const App = () => {
       objectID: 1,
     },
   ];
-  
+
   const [searchTerm, setSearchTerm] = useSemiPersistentState("searchKey");
 
   // (A) Introduce callback function. Pass this function via `props`
@@ -135,9 +135,21 @@ const App = () => {
 
   return (
     <div>
+      {/* <h1>Hello {title}</h1> */}
+      <h1>
+        {welcome.greeting} {welcome.title}
+      </h1>
+
+      <h1>Hello {getTitle("React")}</h1>
       <hr />
 
-      <Search onSearch={handleSearch} searchTerm={searchTerm} />
+      <InputWithLabel
+        id="search"
+        label="Search: "
+        onChangeHandler={handleSearch}
+        value={searchTerm}
+        outputString="The Search Term is: "
+      />
 
       <List list={searchStories} />
     </div>
