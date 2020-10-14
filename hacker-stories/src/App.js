@@ -59,20 +59,37 @@ const InputWithLabel = ({
 }) => {
   // console.log("In Search Component");
   // console.log(props);
-
   // // Object destructuring
   // const { onSearch, searchTerm } = props;
 
-  // (B) Use the callback function
+  // (2A) create an inputRef
+  const inputRef = React.useRef();
+
+  // (2C) Go into React's lifecycle. Perform the focus when the element renders or
+  // when its dependencies change
+  React.useEffect(() => {
+    // Check if the `.current` property exists
+    if (isFocused && inputRef.current) {
+      // (2D) Since `inputRef` is passed into the `input` element as the `ref` attribute,
+      // `.current` property gives us access to that `input` element
+      inputRef.current.focus();
+      console.log("Focusing!");
+    }
+  }, [isFocused]);
+
+  // (1B) Use the callback function
   return (
     <>
       <label htmlFor={id}>{children}</label>
       <input
+        /** (2B) The `inputRef` variable is passed to JSX's reserved `ref` attribute.
+         * The element instance is assigned to the mutable `current` property
+         */
+        ref={inputRef}
         id={id}
         type={type}
         onChange={onChangeHandler}
         value={value}
-        autoFocus={isFocused}
       />
 
       <p>
@@ -133,9 +150,9 @@ const App = () => {
     "React"
   );
 
-  // (A) Introduce callback function. Pass this function via `props`
+  // (1A) Introduce callback function. Pass this function via `props`
   const handleSearch = (event) => {
-    // (C) Calls back to the place where it was introduced
+    // (1C) Calls back to the place where it was introduced
     setSearchTerm(event.target.value);
   };
 
@@ -145,7 +162,6 @@ const App = () => {
 
   return (
     <div>
-      {/* <h1>Hello {title}</h1> */}
       <h1>
         {welcome.greeting} {welcome.title}
       </h1>
@@ -157,8 +173,8 @@ const App = () => {
         id="search"
         onChangeHandler={handleSearch}
         value={searchTerm}
-        autoFocus={true}
         outputString="The Search Term is: "
+        isFocused={true}
       >
         <strong>Search: &nbsp;</strong>
       </InputWithLabel>
