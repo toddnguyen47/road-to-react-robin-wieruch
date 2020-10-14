@@ -54,6 +54,7 @@ const InputWithLabel = ({
   onChangeHandler,
   value,
   outputString,
+  isFocused,
   children,
 }) => {
   // console.log("In Search Component");
@@ -66,7 +67,13 @@ const InputWithLabel = ({
   return (
     <>
       <label htmlFor={id}>{children}</label>
-      <input id={id} type={type} onChange={onChangeHandler} value={value} />
+      <input
+        id={id}
+        type={type}
+        onChange={onChangeHandler}
+        value={value}
+        autoFocus={isFocused}
+      />
 
       <p>
         {outputString} <strong>'{value}'</strong>
@@ -150,6 +157,7 @@ const App = () => {
         id="search"
         onChangeHandler={handleSearch}
         value={searchTerm}
+        autoFocus={true}
         outputString="The Search Term is: "
       >
         <strong>Search: &nbsp;</strong>
