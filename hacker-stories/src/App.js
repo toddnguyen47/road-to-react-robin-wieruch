@@ -25,6 +25,17 @@ const initialStories_ = [
   },
 ];
 
+const getAsyncStories = () => {
+  const sleep_milliseconds = 2000;
+  console.log(`Sleeping for ${sleep_milliseconds} milliseconds`);
+  return new Promise(resolve => {
+    return setTimeout(
+      () => resolve({ data: { stories: initialStories_ } }),
+      sleep_milliseconds
+    );
+  });
+};
+
 /**
  *
  * @param {String} title
@@ -152,10 +163,18 @@ const useSemiPersistentState = (key, initialState) => {
 const App = () => {
   const [searchTerm, setSearchTerm] = useSemiPersistentState(
     "searchKey",
-    "React"
+    ""
   );
 
-  const [stories, setStories] = React.useState(initialStories_);
+  /** Due to empty dependency array, the side-effect only runs once the component
+   * renders for the first time.
+   */
+  const [stories, setStories] = React.useState([]);
+  React.useEffect(() => {
+    getAsyncStories().then(result => {
+      setStories(result.data.stories);
+    });
+  }, []);
 
   // (1A) Introduce callback function. Pass this function via `props`
   const handleSearch = (event) => {
