@@ -6,6 +6,25 @@ const welcome = {
   title: "React",
 };
 
+const initialStories_ = [
+  {
+    title: "React",
+    url: "https://reactjs.org/",
+    author: "Jordan Walke",
+    num_comments: 3,
+    points: 4,
+    objectID: 0,
+  },
+  {
+    title: "Redux",
+    url: "https://redux.js.org/",
+    author: "Dan Abramov, Andrew Clark",
+    num_comments: 2,
+    points: 5,
+    objectID: 1,
+  },
+];
+
 /**
  *
  * @param {String} title
@@ -15,7 +34,7 @@ function getTitle(title) {
 }
 
 // const List = (props) => {
-function List({ list }) {
+function List({ list, onRemoveItem }) {
   // let listStories = props.list;
 
   // {{list.map(({ objectID, ...item }) => {
@@ -27,20 +46,29 @@ function List({ list }) {
   return (
     <div>
       {list.map((item) => {
-        return <Item key={item.objectID} item={item} />;
+        return <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />;
       })}
     </div>
   );
 }
 
-const Item = ({ item }) => {
+const Item = ({ item, onRemoveItem }) => {
+  const handleRemoveItem = () => {
+    onRemoveItem(item);
+  };
+
   return (
-    <ul>
-      <a href={item.url}>{item.title}</a>
-      <li>Author: {item.author}</li>
-      <li>Number of Comments: {item.num_comments}</li>
-      <li>Points: {item.points}</li>
-    </ul>
+    <>
+      <ul>
+        <a href={item.url}>{item.title}</a>
+        <li>Author: {item.author}</li>
+        <li>Number of Comments: {item.num_comments}</li>
+        <li>Points: {item.points}</li>
+      </ul>
+      <span>
+        <button type="button" onClick={handleRemoveItem}>Dismiss</button>
+      </span>
+    </>
   );
 };
 
@@ -126,35 +154,25 @@ const useSemiPersistentState = (key, initialState) => {
  * Everything outside is the global space!
  */
 const App = () => {
-  const stories = [
-    {
-      title: "React",
-      url: "https://reactjs.org/",
-      author: "Jordan Walke",
-      num_comments: 3,
-      points: 4,
-      objectID: 0,
-    },
-    {
-      title: "Redux",
-      url: "https://redux.js.org/",
-      author: "Dan Abramov, Andrew Clark",
-      num_comments: 2,
-      points: 5,
-      objectID: 1,
-    },
-  ];
-
   const [searchTerm, setSearchTerm] = useSemiPersistentState(
     "searchKey",
     "React"
   );
+
+  const [stories, setStories] = React.useState(initialStories_);
 
   // (1A) Introduce callback function. Pass this function via `props`
   const handleSearch = (event) => {
     // (1C) Calls back to the place where it was introduced
     setSearchTerm(event.target.value);
   };
+
+  const handleRemoveStory = (item) => {
+    const newStories = stories.filter(
+      story => item.objectID != story.objectID
+    );
+    setStories(newStories);
+  }
 
   const searchStories = stories.filter((story) => {
     return story.title.toLowerCase().includes(searchTerm.toLowerCase());
@@ -179,7 +197,7 @@ const App = () => {
         <strong>Search: &nbsp;</strong>
       </InputWithLabel>
 
-      <List list={searchStories} />
+      <List list={searchStories} onRemoveItem={handleRemoveStory} />
     </div>
   );
 };
