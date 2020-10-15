@@ -53,10 +53,6 @@ function List({ list, onRemoveItem }) {
 }
 
 const Item = ({ item, onRemoveItem }) => {
-  const handleRemoveItem = () => {
-    onRemoveItem(item);
-  };
-
   return (
     <>
       <ul>
@@ -66,7 +62,7 @@ const Item = ({ item, onRemoveItem }) => {
         <li>Points: {item.points}</li>
       </ul>
       <span>
-        <button type="button" onClick={handleRemoveItem}>Dismiss</button>
+        <button type="button" onClick={() => onRemoveItem(item)}>Dismiss</button>
       </span>
     </>
   );
