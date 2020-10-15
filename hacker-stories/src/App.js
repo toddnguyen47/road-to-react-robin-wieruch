@@ -170,9 +170,14 @@ const App = () => {
    * renders for the first time.
    */
   const [stories, setStories] = React.useState([]);
+  const [isLoading, setIsLoading] = React.useState(false);
+
   React.useEffect(() => {
+    setIsLoading(true);
+
     getAsyncStories().then(result => {
       setStories(result.data.stories);
+      setIsLoading(false);
     });
   }, []);
 
@@ -212,7 +217,11 @@ const App = () => {
         <strong>Search: &nbsp;</strong>
       </InputWithLabel>
 
-      <List list={searchStories} onRemoveItem={handleRemoveStory} />
+      {isLoading ?
+        <p>Loading...</p>
+        :
+        <List list={searchStories} onRemoveItem={handleRemoveStory} />
+      }
     </div>
   );
 };
