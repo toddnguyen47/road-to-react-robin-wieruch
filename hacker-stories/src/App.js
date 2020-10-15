@@ -171,14 +171,20 @@ const App = () => {
    */
   const [stories, setStories] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [isError, setIsError] = React.useState(false);
 
   React.useEffect(() => {
     setIsLoading(true);
 
-    getAsyncStories().then(result => {
-      setStories(result.data.stories);
-      setIsLoading(false);
-    });
+    getAsyncStories()
+      .then((result) => {
+        setStories(result.data.stories);
+        setIsLoading(false);
+      })
+      .catch(() => {
+        setIsError(true);
+      })
+      ;
   }, []);
 
   // (1A) Introduce callback function. Pass this function via `props`
@@ -216,6 +222,8 @@ const App = () => {
       >
         <strong>Search: &nbsp;</strong>
       </InputWithLabel>
+
+      {isError && <p>Cannot retrieve stories data.</p>}
 
       {isLoading ?
         <p>Loading...</p>
