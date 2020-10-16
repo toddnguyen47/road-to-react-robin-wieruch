@@ -4,8 +4,10 @@ import React from "react";
 const TypeSetEnum = {
   // Do not start enum at 0 because of JavaScript's strange equality comparison
   // when it comes to 0
-  SET_STORIES: 1,
-  REMOVE_STORIES: 2
+  REMOVE_STORIES: 1,
+  STORIES_FETCH_INIT: 2,
+  STORIES_FETCH_SUCCESS: 3,
+  STORIES_FETCH_FAILURE: 4
 }
 
 const title = "React";
@@ -36,11 +38,15 @@ const initialStories_ = [
 const getAsyncStories = () => {
   const sleep_milliseconds = 2000;
   console.log(`Sleeping for ${sleep_milliseconds} milliseconds`);
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
+    // Return a resolved object
     return setTimeout(
       () => resolve({ data: { stories: initialStories_ } }),
       sleep_milliseconds
     );
+
+    // // Return a reject (error) instead
+    // return setTimeout(reject, sleep_milliseconds);
   });
 };
 
@@ -157,12 +163,32 @@ const useSemiPersistentState = (key, initialState) => {
 
 const storiesReducer = (state, action) => {
   switch (action.type) {
-    case TypeSetEnum.SET_STORIES:
-      return action.payload;
     case TypeSetEnum.REMOVE_STORIES:
-      return state.filter(
-        (story) => action.payload.objectID !== story.objectID
-      );
+      return {
+        ...state,
+        data: state.data.filter(
+          story => action.payload.objectID !== story.objectID
+        ),
+      }
+    case TypeSetEnum.STORIES_FETCH_INIT:
+      return {
+        ...state,
+        isLoading: true,
+        isError: false
+      };
+    case TypeSetEnum.STORIES_FETCH_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        isError: false,
+        data: action.payload,
+      };
+    case TypeSetEnum.STORIES_FETCH_FAILURE:
+      return {
+        ...state,
+        isLoading: false,
+        isError: true
+      }
     default:
       throw new Error();
   }
@@ -175,29 +201,24 @@ const storiesReducer = (state, action) => {
 const App = () => {
   const [searchTerm, setSearchTerm] = useSemiPersistentState("searchKey", "");
 
-  /** Due to empty dependency array, the side-effect only runs once the component
-   * renders for the first time.
-   */
   // const [stories, setStories] = React.useState([]);
-  const [stories, dispatchStories] = React.useReducer(storiesReducer, []);
-
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [isError, setIsError] = React.useState(false);
+  const [stories, dispatchStories] = React.useReducer(storiesReducer, {
+    data: [], isLoading: false, isError: false
+  });
 
   React.useEffect(() => {
-    setIsLoading(true);
+    dispatchStories({ type: TypeSetEnum.STORIES_FETCH_INIT })
 
     getAsyncStories()
       .then((result) => {
         dispatchStories({
-          type: TypeSetEnum.SET_STORIES,
+          type: TypeSetEnum.STORIES_FETCH_SUCCESS,
           /** In the payload, pass in data */
           payload: result.data.stories,
         });
-        setIsLoading(false);
       })
       .catch(() => {
-        setIsError(true);
+        dispatchStories({ type: TypeSetEnum.STORIES_FETCH_FAILURE })
       });
   }, []);
 
@@ -207,7 +228,7 @@ const App = () => {
     setSearchTerm(event.target.value);
   };
 
-  const searchStories = stories.filter((story) => {
+  const searchStories = stories.data.filter((story) => {
     return story.title.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
@@ -237,9 +258,9 @@ const App = () => {
         <strong>Search: &nbsp;</strong>
       </InputWithLabel>
 
-      {isError && <p>Cannot retrieve stories data.</p>}
+      {stories.isError && <p>Cannot retrieve stories data.</p>}
 
-      {isLoading ? (
+      {stories.isLoading ? (
         <p>Loading...</p>
       ) : (
           <List list={searchStories} onRemoveItem={handleRemoveStory} />
