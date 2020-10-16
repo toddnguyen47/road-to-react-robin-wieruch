@@ -50,14 +50,6 @@ function getTitle(title) {
 
 // const List = (props) => {
 function List({ list, onRemoveItem }) {
-  // let listStories = props.list;
-
-  // {{list.map(({ objectID, ...item }) => {
-  //   // list.map() uses `rest` operation
-  //   // {...item} uses `spread` operation
-  //   // Return a component for the particular `item`
-  //   return <Item key={objectID} {...item} />;
-  // })}}
   return (
     <div>
       {list.map((item) => {
@@ -100,11 +92,6 @@ const InputWithLabel = ({
   isFocused,
   children,
 }) => {
-  // console.log("In Search Component");
-  // console.log(props);
-  // // Object destructuring
-  // const { onSearch, searchTerm } = props;
-
   // (2A) create an inputRef
   const inputRef = React.useRef();
 
