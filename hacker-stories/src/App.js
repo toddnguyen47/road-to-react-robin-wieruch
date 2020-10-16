@@ -16,40 +16,6 @@ const welcome = {
   title: title,
 };
 
-const initialStories_ = [
-  {
-    title: "React",
-    url: "https://reactjs.org/",
-    author: "Jordan Walke",
-    num_comments: 3,
-    points: 4,
-    objectID: 0,
-  },
-  {
-    title: "Redux",
-    url: "https://redux.js.org/",
-    author: "Dan Abramov, Andrew Clark",
-    num_comments: 2,
-    points: 5,
-    objectID: 1,
-  },
-];
-
-const getAsyncStories = () => {
-  const sleep_milliseconds = 2000;
-  console.log(`Sleeping for ${sleep_milliseconds} milliseconds`);
-  return new Promise((resolve, reject) => {
-    // Return a resolved object
-    return setTimeout(
-      () => resolve({ data: { stories: initialStories_ } }),
-      sleep_milliseconds
-    );
-
-    // // Return a reject (error) instead
-    // return setTimeout(reject, sleep_milliseconds);
-  });
-};
-
 /**
  *
  * @param {String} title
@@ -206,21 +172,27 @@ const App = () => {
     data: [], isLoading: false, isError: false
   });
 
-  React.useEffect(() => {
-    dispatchStories({ type: TypeSetEnum.STORIES_FETCH_INIT })
+  // (3A) fetch popular tech stories
+  const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
 
-    getAsyncStories()
-      .then((result) => {
-        dispatchStories({
-          type: TypeSetEnum.STORIES_FETCH_SUCCESS,
-          /** In the payload, pass in data */
-          payload: result.data.stories,
-        });
-      })
-      .catch(() => {
-        dispatchStories({ type: TypeSetEnum.STORIES_FETCH_FAILURE })
-      });
-  }, []);
+  React.useEffect(
+    () => {
+      dispatchStories({ type: TypeSetEnum.STORIES_FETCH_INIT })
+      fetch(`${API_ENDPOINT}react`) // (3B) Fetch stories about 'react'. Use JavaScript Template Literals
+        .then(response => response.json()) // (3C) For Fetch API, the response needs to be translated to JSON
+        .then(result => {
+          dispatchStories({
+            type: TypeSetEnum.STORIES_FETCH_SUCCESS,
+            payload: result.hits, // (3D) send to our reducer as the payload
+          });
+        })
+        .catch(() => {
+          dispatchStories({ type: TypeSetEnum.STORIES_FETCH_FAILURE });
+        })
+        ;
+    },
+    []
+  );
 
   // (1A) Introduce callback function. Pass this function via `props`
   const handleSearch = (event) => {
