@@ -1,9 +1,13 @@
 import React from "react";
 
+// CONSTANTS
+const TYPE_SET_STORIES = 0;
+const TYPE_REMOVE_STORIES = 1;
+
 const title = "React";
 const welcome = {
   greeting: "Hey",
-  title: "React",
+  title: title,
 };
 
 const initialStories_ = [
@@ -160,12 +164,14 @@ const useSemiPersistentState = (key, initialState) => {
   return [value, setValue];
 };
 
-const TYPE_SET_STORIES = 0;
-
 const storiesReducer = (state, action) => {
   switch (action.type) {
     case TYPE_SET_STORIES:
       return action.payload;
+    case TYPE_REMOVE_STORIES:
+      return state.filter(
+        (story) => action.payload.objectID !== story.objectID
+      );
     default:
       throw new Error();
   }
@@ -215,12 +221,9 @@ const App = () => {
   });
 
   const handleRemoveStory = (item) => {
-    const newStories = stories.filter(
-      (story) => item.objectID !== story.objectID
-    );
     dispatchStories({
-      type: TYPE_SET_STORIES,
-      payload: newStories,
+      type: TYPE_REMOVE_STORIES,
+      payload: item,
     });
   };
 
