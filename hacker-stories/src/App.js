@@ -28,7 +28,7 @@ const initialStories_ = [
 const getAsyncStories = () => {
   const sleep_milliseconds = 2000;
   console.log(`Sleeping for ${sleep_milliseconds} milliseconds`);
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     return setTimeout(
       () => resolve({ data: { stories: initialStories_ } }),
       sleep_milliseconds
@@ -57,7 +57,9 @@ function List({ list, onRemoveItem }) {
   return (
     <div>
       {list.map((item) => {
-        return <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />;
+        return (
+          <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
+        );
       })}
     </div>
   );
@@ -73,7 +75,9 @@ const Item = ({ item, onRemoveItem }) => {
         <li>Points: {item.points}</li>
       </ul>
       <span>
-        <button type="button" onClick={() => onRemoveItem(item)}>Dismiss</button>
+        <button type="button" onClick={() => onRemoveItem(item)}>
+          Dismiss
+        </button>
       </span>
     </>
   );
@@ -156,20 +160,30 @@ const useSemiPersistentState = (key, initialState) => {
   return [value, setValue];
 };
 
+const TYPE_SET_STORIES = 0;
+
+const storiesReducer = (state, action) => {
+  switch (action.type) {
+    case TYPE_SET_STORIES:
+      return action.payload;
+    default:
+      throw new Error();
+  }
+};
+
 /**
  * This is the `App` component.
  * Everything outside is the global space!
  */
 const App = () => {
-  const [searchTerm, setSearchTerm] = useSemiPersistentState(
-    "searchKey",
-    ""
-  );
+  const [searchTerm, setSearchTerm] = useSemiPersistentState("searchKey", "");
 
   /** Due to empty dependency array, the side-effect only runs once the component
    * renders for the first time.
    */
-  const [stories, setStories] = React.useState([]);
+  // const [stories, setStories] = React.useState([]);
+  const [stories, dispatchStories] = React.useReducer(storiesReducer, []);
+
   const [isLoading, setIsLoading] = React.useState(false);
   const [isError, setIsError] = React.useState(false);
 
@@ -178,13 +192,16 @@ const App = () => {
 
     getAsyncStories()
       .then((result) => {
-        setStories(result.data.stories);
+        dispatchStories({
+          type: TYPE_SET_STORIES,
+          /** In the payload, pass in data */
+          payload: result.data.stories,
+        });
         setIsLoading(false);
       })
       .catch(() => {
         setIsError(true);
-      })
-      ;
+      });
   }, []);
 
   // (1A) Introduce callback function. Pass this function via `props`
@@ -193,16 +210,19 @@ const App = () => {
     setSearchTerm(event.target.value);
   };
 
-  const handleRemoveStory = (item) => {
-    const newStories = stories.filter(
-      story => item.objectID != story.objectID
-    );
-    setStories(newStories);
-  }
-
   const searchStories = stories.filter((story) => {
     return story.title.toLowerCase().includes(searchTerm.toLowerCase());
   });
+
+  const handleRemoveStory = (item) => {
+    const newStories = stories.filter(
+      (story) => item.objectID !== story.objectID
+    );
+    dispatchStories({
+      type: TYPE_SET_STORIES,
+      payload: newStories,
+    });
+  };
 
   return (
     <div>
@@ -225,11 +245,11 @@ const App = () => {
 
       {isError && <p>Cannot retrieve stories data.</p>}
 
-      {isLoading ?
+      {isLoading ? (
         <p>Loading...</p>
-        :
+      ) : (
         <List list={searchStories} onRemoveItem={handleRemoveStory} />
-      }
+      )}
     </div>
   );
 };
