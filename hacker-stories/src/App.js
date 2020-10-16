@@ -1,8 +1,12 @@
 import React from "react";
 
 // CONSTANTS
-const TYPE_SET_STORIES = 0;
-const TYPE_REMOVE_STORIES = 1;
+const TypeSetEnum = {
+  // Do not start enum at 0 because of JavaScript's strange equality comparison
+  // when it comes to 0
+  SET_STORIES: 1,
+  REMOVE_STORIES: 2
+}
 
 const title = "React";
 const welcome = {
@@ -153,9 +157,9 @@ const useSemiPersistentState = (key, initialState) => {
 
 const storiesReducer = (state, action) => {
   switch (action.type) {
-    case TYPE_SET_STORIES:
+    case TypeSetEnum.SET_STORIES:
       return action.payload;
-    case TYPE_REMOVE_STORIES:
+    case TypeSetEnum.REMOVE_STORIES:
       return state.filter(
         (story) => action.payload.objectID !== story.objectID
       );
@@ -186,7 +190,7 @@ const App = () => {
     getAsyncStories()
       .then((result) => {
         dispatchStories({
-          type: TYPE_SET_STORIES,
+          type: TypeSetEnum.SET_STORIES,
           /** In the payload, pass in data */
           payload: result.data.stories,
         });
@@ -209,7 +213,7 @@ const App = () => {
 
   const handleRemoveStory = (item) => {
     dispatchStories({
-      type: TYPE_REMOVE_STORIES,
+      type: TypeSetEnum.REMOVE_STORIES,
       payload: item,
     });
   };
@@ -238,8 +242,8 @@ const App = () => {
       {isLoading ? (
         <p>Loading...</p>
       ) : (
-        <List list={searchStories} onRemoveItem={handleRemoveStory} />
-      )}
+          <List list={searchStories} onRemoveItem={handleRemoveStory} />
+        )}
     </div>
   );
 };
