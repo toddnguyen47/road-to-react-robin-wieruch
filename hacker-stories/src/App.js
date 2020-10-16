@@ -177,13 +177,16 @@ const App = () => {
 
   React.useEffect(
     () => {
+      if (!searchTerm) return;
+
       dispatchStories({ type: TypeSetEnum.STORIES_FETCH_INIT })
-      fetch(`${API_ENDPOINT}react`) // (3B) Fetch stories about 'react'. Use JavaScript Template Literals
+      fetch(`${API_ENDPOINT}${searchTerm}`) // (3B) Fetch stories about 'react'. Use JavaScript Template Literals
         .then(response => response.json()) // (3C) For Fetch API, the response needs to be translated to JSON
         .then(result => {
           dispatchStories({
             type: TypeSetEnum.STORIES_FETCH_SUCCESS,
-            payload: result.hits, // (3D) send to our reducer as the payload
+            /** (3D) send to our reducer as the payload. The particular website stores results under the key `hit` */
+            payload: result.hits,
           });
         })
         .catch(() => {
@@ -191,7 +194,7 @@ const App = () => {
         })
         ;
     },
-    []
+    [searchTerm]
   );
 
   // (1A) Introduce callback function. Pass this function via `props`
@@ -199,10 +202,6 @@ const App = () => {
     // (1C) Calls back to the place where it was introduced
     setSearchTerm(event.target.value);
   };
-
-  const searchStories = stories.data.filter((story) => {
-    return story.title.toLowerCase().includes(searchTerm.toLowerCase());
-  });
 
   const handleRemoveStory = (item) => {
     dispatchStories({
@@ -235,7 +234,7 @@ const App = () => {
       {stories.isLoading ? (
         <p>Loading...</p>
       ) : (
-          <List list={searchStories} onRemoveItem={handleRemoveStory} />
+          <List list={stories.data} onRemoveItem={handleRemoveStory} />
         )}
     </div>
   );
