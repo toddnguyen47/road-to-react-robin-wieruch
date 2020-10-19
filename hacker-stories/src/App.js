@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 
 // CONSTANTS
 const TypeSetEnum = {
@@ -106,7 +107,7 @@ const InputWithLabel = ({
 };
 
 /**
- *
+ * Store a vallue in localStorage.
  * @param {String} key
  * @param {*} initialState
  * @returns [String, Function]
@@ -196,16 +197,17 @@ const App = () => {
   };
 
   const handleFetchStories = React.useCallback(() => {
+    // This check isn't needed technically as the button is disabled,
+    // but it does not hurt to check
     if (!url) return;
 
     dispatchStories({ type: TypeSetEnum.STORIES_FETCH_INIT });
-    fetch(url) // (3B) Fetch stories about 'react'. Use JavaScript Template Literals
-      .then((response) => response.json()) // (3C) For Fetch API, the response needs to be translated to JSON
+    axios
+      .get(url)
       .then((result) => {
         dispatchStories({
           type: TypeSetEnum.STORIES_FETCH_SUCCESS,
-          /** (3D) send to our reducer as the payload. The particular website stores results under the key `hit` */
-          payload: result.hits,
+          payload: result.data.hits,
         });
       })
       .catch(() => {
