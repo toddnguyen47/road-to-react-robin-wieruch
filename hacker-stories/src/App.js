@@ -7,8 +7,8 @@ const TypeSetEnum = {
   REMOVE_STORIES: 1,
   STORIES_FETCH_INIT: 2,
   STORIES_FETCH_SUCCESS: 3,
-  STORIES_FETCH_FAILURE: 4
-}
+  STORIES_FETCH_FAILURE: 4,
+};
 
 const title = "React";
 const welcome = {
@@ -133,14 +133,14 @@ const storiesReducer = (state, action) => {
       return {
         ...state,
         data: state.data.filter(
-          story => action.payload.objectID !== story.objectID
+          (story) => action.payload.objectID !== story.objectID
         ),
-      }
+      };
     case TypeSetEnum.STORIES_FETCH_INIT:
       return {
         ...state,
         isLoading: true,
-        isError: false
+        isError: false,
       };
     case TypeSetEnum.STORIES_FETCH_SUCCESS:
       return {
@@ -153,8 +153,8 @@ const storiesReducer = (state, action) => {
       return {
         ...state,
         isLoading: false,
-        isError: true
-      }
+        isError: true,
+      };
     default:
       throw new Error();
   }
@@ -169,33 +169,35 @@ const App = () => {
 
   // const [stories, setStories] = React.useState([]);
   const [stories, dispatchStories] = React.useReducer(storiesReducer, {
-    data: [], isLoading: false, isError: false
+    data: [],
+    isLoading: false,
+    isError: false,
   });
 
   // (3A) fetch popular tech stories
-  const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
+  const API_ENDPOINT = "https://hn.algolia.com/api/v1/search?query=";
 
-  React.useEffect(
-    () => {
-      if (!searchTerm) return;
+  const handleFetchStories = React.useCallback(() => {
+    if (!searchTerm) return;
 
-      dispatchStories({ type: TypeSetEnum.STORIES_FETCH_INIT })
-      fetch(`${API_ENDPOINT}${searchTerm}`) // (3B) Fetch stories about 'react'. Use JavaScript Template Literals
-        .then(response => response.json()) // (3C) For Fetch API, the response needs to be translated to JSON
-        .then(result => {
-          dispatchStories({
-            type: TypeSetEnum.STORIES_FETCH_SUCCESS,
-            /** (3D) send to our reducer as the payload. The particular website stores results under the key `hit` */
-            payload: result.hits,
-          });
-        })
-        .catch(() => {
-          dispatchStories({ type: TypeSetEnum.STORIES_FETCH_FAILURE });
-        })
-        ;
-    },
-    [searchTerm]
-  );
+    dispatchStories({ type: TypeSetEnum.STORIES_FETCH_INIT });
+    fetch(`${API_ENDPOINT}${searchTerm}`) // (3B) Fetch stories about 'react'. Use JavaScript Template Literals
+      .then((response) => response.json()) // (3C) For Fetch API, the response needs to be translated to JSON
+      .then((result) => {
+        dispatchStories({
+          type: TypeSetEnum.STORIES_FETCH_SUCCESS,
+          /** (3D) send to our reducer as the payload. The particular website stores results under the key `hit` */
+          payload: result.hits,
+        });
+      })
+      .catch(() => {
+        dispatchStories({ type: TypeSetEnum.STORIES_FETCH_FAILURE });
+      });
+  }, [searchTerm]); // (4E) when `searchTerm` changes
+
+  React.useEffect(() => {
+    handleFetchStories(); // (4C) invoke the callback using the useEffect() hook
+  }, [handleFetchStories]); // (4D) dependency array: depends on any re-defined function handleFetchStories
 
   // (1A) Introduce callback function. Pass this function via `props`
   const handleSearch = (event) => {
@@ -234,8 +236,8 @@ const App = () => {
       {stories.isLoading ? (
         <p>Loading...</p>
       ) : (
-          <List list={stories.data} onRemoveItem={handleRemoveStory} />
-        )}
+        <List list={stories.data} onRemoveItem={handleRemoveStory} />
+      )}
     </div>
   );
 };
