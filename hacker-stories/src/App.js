@@ -196,23 +196,19 @@ const App = () => {
     });
   };
 
-  const handleFetchStories = React.useCallback(() => {
+  const handleFetchStories = React.useCallback(async () => {
     // This check isn't needed technically as the button is disabled,
     // but it does not hurt to check
     if (!url) return;
 
     dispatchStories({ type: TypeSetEnum.STORIES_FETCH_INIT });
-    axios
-      .get(url)
-      .then((result) => {
-        dispatchStories({
-          type: TypeSetEnum.STORIES_FETCH_SUCCESS,
-          payload: result.data.hits,
-        });
-      })
-      .catch(() => {
-        dispatchStories({ type: TypeSetEnum.STORIES_FETCH_FAILURE });
-      });
+    try {
+      const result = await axios.get(url);
+      console.log("Fetching!");
+      dispatchStories({ type: TypeSetEnum.STORIES_FETCH_SUCCESS, payload: result.data.hits });
+    } catch {
+      dispatchStories({ type: TypeSetEnum.STORIES_FETCH_FAILURE });
+    };
   }, [url]); // (4E) when `searchTerm` changes
 
   React.useEffect(() => {
@@ -247,8 +243,8 @@ const App = () => {
       {stories.isLoading ? (
         <p>Loading...</p>
       ) : (
-        <List list={stories.data} onRemoveItem={handleRemoveStory} />
-      )}
+          <List list={stories.data} onRemoveItem={handleRemoveStory} />
+        )}
     </div>
   );
 };
