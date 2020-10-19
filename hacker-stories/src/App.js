@@ -62,8 +62,8 @@ const Item = ({ item, onRemoveItem }) => {
 const InputWithLabel = ({
   id,
   type = "text",
-  onChangeHandler,
   value,
+  onInputChanged,
   outputString,
   isFocused,
   children,
@@ -94,7 +94,7 @@ const InputWithLabel = ({
         ref={inputRef}
         id={id}
         type={type}
-        onChange={onChangeHandler}
+        onChange={onInputChanged}
         value={value}
       />
 
@@ -177,11 +177,29 @@ const App = () => {
   // (3A) fetch popular tech stories
   const API_ENDPOINT = "https://hn.algolia.com/api/v1/search?query=";
 
+  const handleSearchInput = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  /** Make a new `url` state and a function to update it */
+  const [url, setUrl] = React.useState(`${API_ENDPOINT}${searchTerm}`);
+
+  const handleSearchSubmit = () => {
+    setUrl(`${API_ENDPOINT}${searchTerm}`);
+  };
+
+  const handleRemoveStory = (item) => {
+    dispatchStories({
+      type: TypeSetEnum.REMOVE_STORIES,
+      payload: item,
+    });
+  };
+
   const handleFetchStories = React.useCallback(() => {
-    if (!searchTerm) return;
+    if (!url) return;
 
     dispatchStories({ type: TypeSetEnum.STORIES_FETCH_INIT });
-    fetch(`${API_ENDPOINT}${searchTerm}`) // (3B) Fetch stories about 'react'. Use JavaScript Template Literals
+    fetch(url) // (3B) Fetch stories about 'react'. Use JavaScript Template Literals
       .then((response) => response.json()) // (3C) For Fetch API, the response needs to be translated to JSON
       .then((result) => {
         dispatchStories({
@@ -193,24 +211,11 @@ const App = () => {
       .catch(() => {
         dispatchStories({ type: TypeSetEnum.STORIES_FETCH_FAILURE });
       });
-  }, [searchTerm]); // (4E) when `searchTerm` changes
+  }, [url]); // (4E) when `searchTerm` changes
 
   React.useEffect(() => {
     handleFetchStories(); // (4C) invoke the callback using the useEffect() hook
   }, [handleFetchStories]); // (4D) dependency array: depends on any re-defined function handleFetchStories
-
-  // (1A) Introduce callback function. Pass this function via `props`
-  const handleSearch = (event) => {
-    // (1C) Calls back to the place where it was introduced
-    setSearchTerm(event.target.value);
-  };
-
-  const handleRemoveStory = (item) => {
-    dispatchStories({
-      type: TypeSetEnum.REMOVE_STORIES,
-      payload: item,
-    });
-  };
 
   return (
     <div>
@@ -223,13 +228,17 @@ const App = () => {
 
       <InputWithLabel
         id="search"
-        onChangeHandler={handleSearch}
         value={searchTerm}
-        outputString="The Search Term is: "
+        onInputChanged={handleSearchInput}
         isFocused={true}
+        outputString="The Search Term is: "
       >
         <strong>Search: &nbsp;</strong>
       </InputWithLabel>
+
+      <button type="button" disabled={!searchTerm} onClick={handleSearchSubmit}>
+        Submit
+      </button>
 
       {stories.isError && <p>Cannot retrieve stories data.</p>}
 
