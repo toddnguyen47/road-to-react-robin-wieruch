@@ -161,6 +161,28 @@ const storiesReducer = (state, action) => {
   }
 };
 
+const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => {
+  return (
+    <>
+      <form onSubmit={onSearchSubmit}>
+        <InputWithLabel
+          id="search"
+          value={searchTerm}
+          onInputChanged={onSearchInput}
+          isFocused={true}
+          outputString="The Search Term is: "
+        >
+          <strong>Search: &nbsp;</strong>
+        </InputWithLabel>
+
+        <button type="submit" disabled={!searchTerm}>
+          Submit
+        </button>
+      </form>
+    </>
+  );
+};
+
 /**
  * This is the `App` component.
  * Everything outside is the global space!
@@ -185,8 +207,9 @@ const App = () => {
   /** Make a new `url` state and a function to update it */
   const [url, setUrl] = React.useState(`${API_ENDPOINT}${searchTerm}`);
 
-  const handleSearchSubmit = () => {
+  const handleSearchSubmit = (event) => {
     setUrl(`${API_ENDPOINT}${searchTerm}`);
+    event.preventDefault();
   };
 
   const handleRemoveStory = (item) => {
@@ -205,10 +228,13 @@ const App = () => {
     try {
       const result = await axios.get(url);
       console.log("Fetching!");
-      dispatchStories({ type: TypeSetEnum.STORIES_FETCH_SUCCESS, payload: result.data.hits });
+      dispatchStories({
+        type: TypeSetEnum.STORIES_FETCH_SUCCESS,
+        payload: result.data.hits,
+      });
     } catch {
       dispatchStories({ type: TypeSetEnum.STORIES_FETCH_FAILURE });
-    };
+    }
   }, [url]); // (4E) when `searchTerm` changes
 
   React.useEffect(() => {
@@ -224,27 +250,19 @@ const App = () => {
       <h1>Hello {getTitle("React")}</h1>
       <hr />
 
-      <InputWithLabel
-        id="search"
-        value={searchTerm}
-        onInputChanged={handleSearchInput}
-        isFocused={true}
-        outputString="The Search Term is: "
-      >
-        <strong>Search: &nbsp;</strong>
-      </InputWithLabel>
-
-      <button type="button" disabled={!searchTerm} onClick={handleSearchSubmit}>
-        Submit
-      </button>
+      <SearchForm
+        searchTerm={searchTerm}
+        onSearchInput={handleSearchInput}
+        onSearchSubmit={handleSearchSubmit}
+      />
 
       {stories.isError && <p>Cannot retrieve stories data.</p>}
 
       {stories.isLoading ? (
         <p>Loading...</p>
       ) : (
-          <List list={stories.data} onRemoveItem={handleRemoveStory} />
-        )}
+        <List list={stories.data} onRemoveItem={handleRemoveStory} />
+      )}
     </div>
   );
 };
