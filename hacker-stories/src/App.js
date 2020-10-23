@@ -1,6 +1,8 @@
 import React from "react";
 import axios from "axios";
 
+import './App.css';
+
 // CONSTANTS
 const TypeSetEnum = {
   // Do not start enum at 0 because of JavaScript's strange equality comparison
@@ -28,31 +30,42 @@ function getTitle(title) {
 // const List = (props) => {
 function List({ list, onRemoveItem }) {
   return (
-    <div>
-      {list.map((item) => {
-        return (
-          <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
-        );
-      })}
-    </div>
+    <>
+      <div className="item">
+        <span style={{ width: '40%' }}>URL</span>
+        <span style={{ width: '30%' }}>Author</span>
+        <span style={{ width: '10%' }}># Comments</span>
+        <span style={{ width: '10%' }}>Points</span>
+        <span style={{ width: '10%' }}></span>
+      </div>
+
+      <div>
+        {list.map((item) => {
+          return (
+            <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
+          );
+        })}
+      </div>
+    </>
   );
 }
 
 const Item = ({ item, onRemoveItem }) => {
   return (
-    <>
-      <ul>
+    <div className="item">
+      <span style={{ width: '40%' }}>
         <a href={item.url}>{item.title}</a>
-        <li>Author: {item.author}</li>
-        <li>Number of Comments: {item.num_comments}</li>
-        <li>Points: {item.points}</li>
-      </ul>
-      <span>
-        <button type="button" onClick={() => onRemoveItem(item)}>
+      </span>
+      <span style={{ width: '30%' }}>{item.author}</span>
+      <span style={{ width: '10%' }}>{item.num_comments}</span>
+      <span style={{ width: '10%' }}>{item.points}</span>
+      <span style={{ width: '10%' }}>
+        <button type="button" className="button button__small"
+          onClick={() => onRemoveItem(item)}>
           Dismiss
         </button>
       </span>
-    </>
+    </div>
   );
 };
 
@@ -242,13 +255,12 @@ const App = () => {
   }, [handleFetchStories]); // (4D) dependency array: depends on any re-defined function handleFetchStories
 
   return (
-    <div>
-      <h1>
+    <div className="container">
+      <h1 className="headline-primary">
         {welcome.greeting} {welcome.title}
       </h1>
 
-      <h1>Hello {getTitle("React")}</h1>
-      <hr />
+      <h1 className="headline-primary">Hello {getTitle("React")}</h1>
 
       <SearchForm
         searchTerm={searchTerm}
@@ -261,8 +273,8 @@ const App = () => {
       {stories.isLoading ? (
         <p>Loading...</p>
       ) : (
-        <List list={stories.data} onRemoveItem={handleRemoveStory} />
-      )}
+          <List list={stories.data} onRemoveItem={handleRemoveStory} />
+        )}
     </div>
   );
 };

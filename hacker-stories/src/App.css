@@ -36,3 +36,48 @@
     transform: rotate(360deg);
   }
 }
+
+/* o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o- */
+/*   new things! */
+/* o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o- */
+html {
+  font-size: 62.5%; /* 10 / 16 = 62.5% */
+}
+
+body {
+  font-size: 1.6rem;
+}
+
+.container {
+  /* height: 100vw; */
+  padding: 2rem;
+
+  background: #83a4d4; /* fallback for old browsers */
+  background: linear-gradient(to left, #b6fbff, #83a4d4);
+
+  color: #171212;
+}
+
+.headline-primary {
+  font-size: 4.8rem;
+  font-weight: 300;
+  letter-spacing: 0.2rem;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  padding-bottom: 0.5rem;
+}
+
+.item > span {
+  padding: 0rem 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  /* white-space: nowrap; */
+  text-overflow: ellipsis;
+}
+
+.item > span > a {
+  color: inherit;
+}
