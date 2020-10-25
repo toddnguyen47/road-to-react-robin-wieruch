@@ -1,7 +1,8 @@
 import React from "react";
 import axios from "axios";
+import classnames from "classnames";
 
-import './App.css';
+import styles from "./App.module.css";
 
 // CONSTANTS
 const TypeSetEnum = {
@@ -31,12 +32,12 @@ function getTitle(title) {
 function List({ list, onRemoveItem }) {
   return (
     <>
-      <div className="item">
-        <span style={{ width: '40%' }}>URL</span>
-        <span style={{ width: '30%' }}>Author</span>
-        <span style={{ width: '10%' }}># Comments</span>
-        <span style={{ width: '10%' }}>Points</span>
-        <span style={{ width: '10%' }}></span>
+      <div className={styles["item"]}>
+        <span style={{ width: "40%" }}>URL</span>
+        <span style={{ width: "30%" }}>Author</span>
+        <span style={{ width: "10%" }}># Comments</span>
+        <span style={{ width: "10%" }}>Points</span>
+        <span style={{ width: "10%" }}></span>
       </div>
 
       <div>
@@ -52,16 +53,19 @@ function List({ list, onRemoveItem }) {
 
 const Item = ({ item, onRemoveItem }) => {
   return (
-    <div className="item">
-      <span style={{ width: '40%' }}>
+    <div className={styles["item"]}>
+      <span style={{ width: "40%" }}>
         <a href={item.url}>{item.title}</a>
       </span>
-      <span style={{ width: '30%' }}>{item.author}</span>
-      <span style={{ width: '10%' }}>{item.num_comments}</span>
-      <span style={{ width: '10%' }}>{item.points}</span>
-      <span style={{ width: '10%' }}>
-        <button type="button" className="button button__small"
-          onClick={() => onRemoveItem(item)}>
+      <span style={{ width: "30%" }}>{item.author}</span>
+      <span style={{ width: "10%" }}>{item.num_comments}</span>
+      <span style={{ width: "10%" }}>{item.points}</span>
+      <span style={{ width: "10%" }}>
+        <button
+          type="button"
+          className={`${styles["button"]} ${styles["button__small"]}`}
+          onClick={() => onRemoveItem(item)}
+        >
           Dismiss
         </button>
       </span>
@@ -100,7 +104,9 @@ const InputWithLabel = ({
   // (1B) Use the callback function
   return (
     <>
-      <label htmlFor={id}>{children}</label>
+      <label htmlFor={id} className={styles["label"]}>
+        {children}
+      </label>
       <input
         /** (2B) The `inputRef` variable is passed to JSX's reserved `ref` attribute.
          * The element instance is assigned to the mutable `current` property
@@ -110,6 +116,7 @@ const InputWithLabel = ({
         type={type}
         onChange={onInputChanged}
         value={value}
+        className={styles["input"]}
       />
 
       <p>
@@ -188,7 +195,11 @@ const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => {
           <strong>Search: &nbsp;</strong>
         </InputWithLabel>
 
-        <button type="submit" disabled={!searchTerm}>
+        <button
+          type="submit"
+          disabled={!searchTerm}
+          className={classnames(styles["button"], styles["button__large"])}
+        >
           Submit
         </button>
       </form>
@@ -255,12 +266,12 @@ const App = () => {
   }, [handleFetchStories]); // (4D) dependency array: depends on any re-defined function handleFetchStories
 
   return (
-    <div className="container">
-      <h1 className="headline-primary">
+    <div className={styles["container"]}>
+      <h1 className={styles["headline-primary"]}>
         {welcome.greeting} {welcome.title}
       </h1>
 
-      <h1 className="headline-primary">Hello {getTitle("React")}</h1>
+      <h1 className={styles["headline-primary"]}>Hello {getTitle("React")}</h1>
 
       <SearchForm
         searchTerm={searchTerm}
@@ -273,8 +284,8 @@ const App = () => {
       {stories.isLoading ? (
         <p>Loading...</p>
       ) : (
-          <List list={stories.data} onRemoveItem={handleRemoveStory} />
-        )}
+        <List list={stories.data} onRemoveItem={handleRemoveStory} />
+      )}
     </div>
   );
 };
