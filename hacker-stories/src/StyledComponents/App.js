@@ -1,8 +1,19 @@
 import React from "react";
 import axios from "axios";
-import classnames from "classnames";
 
-import styles from "./App.module.css";
+// import classnames from "classnames";
+// import styles from "./App.module.css";
+import {
+  HeadlinePrimary,
+  StyledButtonSmall,
+  StyledButtonLarge,
+  StyledColumn,
+  StyledContainer,
+  StyledItem,
+  StyledInput,
+  StyledLabel,
+  StyledSearchForm,
+} from "./AppStyledComponent";
 
 // CONSTANTS
 const TypeSetEnum = {
@@ -32,13 +43,13 @@ function getTitle(title) {
 function List({ list, onRemoveItem }) {
   return (
     <>
-      <div className={styles["item"]}>
-        <span style={{ width: "40%" }}>URL</span>
-        <span style={{ width: "30%" }}>Author</span>
-        <span style={{ width: "10%" }}># Comments</span>
-        <span style={{ width: "10%" }}>Points</span>
-        <span style={{ width: "10%" }}></span>
-      </div>
+      <StyledItem>
+        <StyledColumn style={{ width: "40%" }}>URL</StyledColumn>
+        <StyledColumn style={{ width: "30%" }}>Author</StyledColumn>
+        <StyledColumn style={{ width: "10%" }}># Comments</StyledColumn>
+        <StyledColumn style={{ width: "10%" }}>Points</StyledColumn>
+        <StyledColumn style={{ width: "10%" }}></StyledColumn>
+      </StyledItem>
 
       <div>
         {list.map((item) => {
@@ -53,23 +64,19 @@ function List({ list, onRemoveItem }) {
 
 const Item = ({ item, onRemoveItem }) => {
   return (
-    <div className={styles["item"]}>
-      <span style={{ width: "40%" }}>
+    <StyledItem>
+      <StyledColumn style={{ width: "40%" }}>
         <a href={item.url}>{item.title}</a>
-      </span>
-      <span style={{ width: "30%" }}>{item.author}</span>
-      <span style={{ width: "10%" }}>{item.num_comments}</span>
-      <span style={{ width: "10%" }}>{item.points}</span>
-      <span style={{ width: "10%" }}>
-        <button
-          type="button"
-          className={`${styles["button"]} ${styles["button__small"]}`}
-          onClick={() => onRemoveItem(item)}
-        >
+      </StyledColumn>
+      <StyledColumn style={{ width: "30%" }}>{item.author}</StyledColumn>
+      <StyledColumn style={{ width: "10%" }}>{item.num_comments}</StyledColumn>
+      <StyledColumn style={{ width: "10%" }}>{item.points}</StyledColumn>
+      <StyledColumn style={{ width: "10%" }}>
+        <StyledButtonSmall type="button" onClick={() => onRemoveItem(item)}>
           Dismiss
-        </button>
-      </span>
-    </div>
+        </StyledButtonSmall>
+      </StyledColumn>
+    </StyledItem>
   );
 };
 
@@ -104,10 +111,8 @@ const InputWithLabel = ({
   // (1B) Use the callback function
   return (
     <>
-      <label htmlFor={id} className={styles["label"]}>
-        {children}
-      </label>
-      <input
+      <StyledLabel htmlFor={id}>{children}</StyledLabel>
+      <StyledInput
         /** (2B) The `inputRef` variable is passed to JSX's reserved `ref` attribute.
          * The element instance is assigned to the mutable `current` property
          */
@@ -116,7 +121,6 @@ const InputWithLabel = ({
         type={type}
         onChange={onInputChanged}
         value={value}
-        className={styles["input"]}
       />
 
       <p>
@@ -184,7 +188,7 @@ const storiesReducer = (state, action) => {
 const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => {
   return (
     <>
-      <form onSubmit={onSearchSubmit} className={styles["searchForm"]}>
+      <StyledSearchForm onSubmit={onSearchSubmit}>
         <InputWithLabel
           id="search"
           value={searchTerm}
@@ -195,14 +199,10 @@ const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => {
           <strong>Search: &nbsp;</strong>
         </InputWithLabel>
 
-        <button
-          type="submit"
-          disabled={!searchTerm}
-          className={classnames(styles["button"], styles["button__large"])}
-        >
+        <StyledButtonLarge type="submit" disabled={!searchTerm}>
           Submit
-        </button>
-      </form>
+        </StyledButtonLarge>
+      </StyledSearchForm>
     </>
   );
 };
@@ -266,12 +266,12 @@ const App = () => {
   }, [handleFetchStories]); // (4D) dependency array: depends on any re-defined function handleFetchStories
 
   return (
-    <div className={styles["container"]}>
-      <h1 className={styles["headline-primary"]}>
+    <StyledContainer>
+      <HeadlinePrimary>
         {welcome.greeting} {welcome.title}
-      </h1>
+      </HeadlinePrimary>
 
-      <h1 className={styles["headline-primary"]}>Hello {getTitle("React")}</h1>
+      <HeadlinePrimary>Hello {getTitle("React")}</HeadlinePrimary>
 
       <SearchForm
         searchTerm={searchTerm}
@@ -286,7 +286,7 @@ const App = () => {
       ) : (
         <List list={stories.data} onRemoveItem={handleRemoveStory} />
       )}
-    </div>
+    </StyledContainer>
   );
 };
 
