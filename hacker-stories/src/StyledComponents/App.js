@@ -2,6 +2,8 @@ import React from "react";
 import axios from "axios";
 import styled from "styled-components";
 
+import { ReactComponent as Check } from "../images/check.svg";
+
 // CONSTANTS
 const TypeSetEnum = {
   // Do not start enum at 0 because of JavaScript's strange equality comparison
@@ -35,7 +37,7 @@ function List({ list, onRemoveItem }) {
         <StyledColumn style={{ width: "30%" }}>Author</StyledColumn>
         <StyledColumn style={{ width: "10%" }}># Comments</StyledColumn>
         <StyledColumn style={{ width: "10%" }}>Points</StyledColumn>
-        <StyledColumn style={{ width: "10%" }}></StyledColumn>
+        <StyledColumn style={{ width: "10%" }}>Dismiss</StyledColumn>
       </StyledItem>
 
       <div>
@@ -60,7 +62,7 @@ const Item = ({ item, onRemoveItem }) => {
       <StyledColumn style={{ width: "10%" }}>{item.points}</StyledColumn>
       <StyledColumn style={{ width: "10%" }}>
         <StyledButtonSmall type="button" onClick={() => onRemoveItem(item)}>
-          Dismiss
+          <Check width="1.8rem" height="1.8rem" />
         </StyledButtonSmall>
       </StyledColumn>
     </StyledItem>
@@ -273,6 +275,19 @@ const App = () => {
       ) : (
         <List list={stories.data} onRemoveItem={handleRemoveStory} />
       )}
+
+      <hr />
+      <footer>
+        Icons made by{" "}
+        <a href="https://www.flaticon.com/authors/freepik" title="Freepik">
+          Freepik
+        </a>{" "}
+        from{" "}
+        <a href="https://www.flaticon.com/" title="Flaticon">
+          {" "}
+          www.flaticon.com
+        </a>
+      </footer>
     </StyledContainer>
   );
 };
@@ -300,6 +315,11 @@ const StyledButton = styled.button`
   &:hover {
     background: #171212;
     color: #ffffff;
+  }
+
+  &:hover > svg > g {
+    fill: palevioletred;
+    stroke: #ffffff;
   }
 `;
 
