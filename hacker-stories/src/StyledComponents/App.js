@@ -126,6 +126,8 @@ const InputWithLabel = ({
  * @returns [String, Function]
  */
 const useSemiPersistentState = (key, initialState) => {
+  const isMounted = React.useRef(false);
+
   const [value, setValue] = React.useState(
     localStorage.getItem(key) || initialState
   );
@@ -134,8 +136,14 @@ const useSemiPersistentState = (key, initialState) => {
    * In case `key` changes outside this hook
    */
   React.useEffect(() => {
-    // Store in localStorage every time searchTerm is changed
-    localStorage.setItem(key, value);
+    if (!isMounted.current) {
+      isMounted.current = true;
+    }
+    else {
+      console.log("A: useSemiPersistentState() useEffect()");
+      // Store in localStorage every time searchTerm is changed
+      localStorage.setItem(key, value);
+    }
   }, [key, value]);
 
   return [value, setValue];
@@ -273,8 +281,8 @@ const App = () => {
       {stories.isLoading ? (
         <p>Loading...</p>
       ) : (
-        <List list={stories.data} onRemoveItem={handleRemoveStory} />
-      )}
+          <List list={stories.data} onRemoveItem={handleRemoveStory} />
+        )}
 
       <hr />
       <footer>
