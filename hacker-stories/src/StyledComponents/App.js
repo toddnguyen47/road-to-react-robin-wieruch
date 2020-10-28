@@ -65,7 +65,7 @@ const Item = ({ item, onRemoveItem }) => {
       <StyledColumn style={{ width: "10%" }}>{item.points}</StyledColumn>
       <StyledColumn style={{ width: "10%" }}>
         <StyledButtonSmall type="button" onClick={() => onRemoveItem(item)}>
-          <Check width="1.8rem" height="1.8rem" />
+          <Check width="18px" height="18px" />
         </StyledButtonSmall>
       </StyledColumn>
     </StyledItem>
@@ -141,8 +141,7 @@ const useSemiPersistentState = (key, initialState) => {
   React.useEffect(() => {
     if (!isMounted.current) {
       isMounted.current = true;
-    }
-    else {
+    } else {
       console.log("A: useSemiPersistentState() useEffect()");
       // Store in localStorage every time searchTerm is changed
       localStorage.setItem(key, value);
@@ -207,6 +206,12 @@ const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => {
   );
 };
 
+const getSumComments = (stories) => {
+  console.log("C: Computing Sum");
+
+  return stories.data.reduce((result, value) => result + value.num_comments, 0);
+};
+
 /**
  * This is the `App` component.
  * Everything outside is the global space!
@@ -237,8 +242,8 @@ const App = () => {
   };
 
   /** Use a Callback so it only re-renders if one of its dependencies
-    * in the dependency array changes
-    */
+   * in the dependency array changes
+   */
   const handleRemoveStory = React.useCallback((item) => {
     dispatchStories({
       type: TypeSetEnum.REMOVE_STORIES,
@@ -270,6 +275,8 @@ const App = () => {
 
   console.log("B: App");
 
+  const sumComments = React.useMemo(() => getSumComments(stories), [stories]);
+
   return (
     <StyledContainer>
       <HeadlinePrimary>
@@ -284,13 +291,15 @@ const App = () => {
         onSearchSubmit={handleSearchSubmit}
       />
 
+      <p>Total number of comments: {sumComments}</p>
+
       {stories.isError && <p>Cannot retrieve stories data.</p>}
 
       {stories.isLoading ? (
         <p>Loading...</p>
       ) : (
-          <List list={stories.data} onRemoveItem={handleRemoveStory} />
-        )}
+        <List list={stories.data} onRemoveItem={handleRemoveStory} />
+      )}
 
       <hr />
       <footer>
