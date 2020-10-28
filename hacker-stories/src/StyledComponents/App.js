@@ -184,7 +184,8 @@ const storiesReducer = (state, action) => {
   }
 };
 
-const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => {
+const SearchForm = React.memo(({ searchTerm, onSearchInput, onSearchSubmit }) => {
+  console.log("Rendering Search Form!");
   return (
     <>
       <StyledSearchForm onSubmit={onSearchSubmit}>
@@ -204,7 +205,7 @@ const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => {
       </StyledSearchForm>
     </>
   );
-};
+});
 
 const getSumComments = (stories) => {
   console.log("C: Computing Sum");
@@ -229,17 +230,17 @@ const App = () => {
   // (3A) fetch popular tech stories
   const API_ENDPOINT = "https://hn.algolia.com/api/v1/search?query=";
 
-  const handleSearchInput = (event) => {
+  const handleSearchInput = React.useCallback((event) => {
     setSearchTerm(event.target.value);
-  };
+  }, [setSearchTerm]);
 
   /** Make a new `url` state and a function to update it */
   const [url, setUrl] = React.useState(`${API_ENDPOINT}${searchTerm}`);
 
-  const handleSearchSubmit = (event) => {
+  const handleSearchSubmit = React.useCallback((event) => {
     setUrl(`${API_ENDPOINT}${searchTerm}`);
     event.preventDefault();
-  };
+  }, [searchTerm]);
 
   /** Use a Callback so it only re-renders if one of its dependencies
    * in the dependency array changes
@@ -298,8 +299,8 @@ const App = () => {
       {stories.isLoading ? (
         <p>Loading...</p>
       ) : (
-        <List list={stories.data} onRemoveItem={handleRemoveStory} />
-      )}
+          <List list={stories.data} onRemoveItem={handleRemoveStory} />
+        )}
 
       <hr />
       <footer>
