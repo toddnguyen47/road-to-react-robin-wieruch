@@ -28,8 +28,11 @@ function getTitle(title) {
   return "| " + title + " |";
 }
 
-// const List = (props) => {
-function List({ list, onRemoveItem }) {
+// function List({ list, onRemoveItem }) {
+const List = React.memo(({ list, onRemoveItem }) => {
+  console.log("B: List");
+  console.log(list.length);
+
   return (
     <>
       <StyledItem>
@@ -49,7 +52,7 @@ function List({ list, onRemoveItem }) {
       </div>
     </>
   );
-}
+});
 
 const Item = ({ item, onRemoveItem }) => {
   return (
@@ -233,12 +236,15 @@ const App = () => {
     event.preventDefault();
   };
 
-  const handleRemoveStory = (item) => {
+  /** Use a Callback so it only re-renders if one of its dependencies
+    * in the dependency array changes
+    */
+  const handleRemoveStory = React.useCallback((item) => {
     dispatchStories({
       type: TypeSetEnum.REMOVE_STORIES,
       payload: item,
     });
-  };
+  }, []);
 
   const handleFetchStories = React.useCallback(async () => {
     // This check isn't needed technically as the button is disabled,
@@ -261,6 +267,8 @@ const App = () => {
   React.useEffect(() => {
     handleFetchStories(); // (4C) invoke the callback using the useEffect() hook
   }, [handleFetchStories]); // (4D) dependency array: depends on any re-defined function handleFetchStories
+
+  console.log("B: App");
 
   return (
     <StyledContainer>
