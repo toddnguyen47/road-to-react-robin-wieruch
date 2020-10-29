@@ -28,8 +28,11 @@ function getTitle(title) {
   return "| " + title + " |";
 }
 
-// const List = (props) => {
-function List({ list, onRemoveItem }) {
+// function List({ list, onRemoveItem }) {
+const List = React.memo(({ list, onRemoveItem }) => {
+  console.log("B: List");
+  console.log(list.length);
+
   return (
     <>
       <StyledItem>
@@ -49,9 +52,11 @@ function List({ list, onRemoveItem }) {
       </div>
     </>
   );
-}
+});
 
-const Item = ({ item, onRemoveItem }) => {
+const Item = React.memo(({ item, onRemoveItem }) => {
+  console.log("Rendering Item");
+
   return (
     <StyledItem>
       <StyledColumn style={{ width: "40%" }}>
@@ -62,12 +67,12 @@ const Item = ({ item, onRemoveItem }) => {
       <StyledColumn style={{ width: "10%" }}>{item.points}</StyledColumn>
       <StyledColumn style={{ width: "10%" }}>
         <StyledButtonSmall type="button" onClick={() => onRemoveItem(item)}>
-          <Check width="1.8rem" height="1.8rem" />
+          <Check width="18px" height="18px" />
         </StyledButtonSmall>
       </StyledColumn>
     </StyledItem>
   );
-};
+});
 
 // /** Passing in a full props javascript object */
 // const Search = (props) => {
@@ -126,6 +131,8 @@ const InputWithLabel = ({
  * @returns [String, Function]
  */
 const useSemiPersistentState = (key, initialState) => {
+  const isMounted = React.useRef(false);
+
   const [value, setValue] = React.useState(
     localStorage.getItem(key) || initialState
   );
@@ -134,8 +141,13 @@ const useSemiPersistentState = (key, initialState) => {
    * In case `key` changes outside this hook
    */
   React.useEffect(() => {
-    // Store in localStorage every time searchTerm is changed
-    localStorage.setItem(key, value);
+    if (!isMounted.current) {
+      isMounted.current = true;
+    } else {
+      console.log("A: useSemiPersistentState() useEffect()");
+      // Store in localStorage every time searchTerm is changed
+      localStorage.setItem(key, value);
+    }
   }, [key, value]);
 
   return [value, setValue];
@@ -174,7 +186,8 @@ const storiesReducer = (state, action) => {
   }
 };
 
-const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => {
+const SearchForm = React.memo(({ searchTerm, onSearchInput, onSearchSubmit }) => {
+  console.log("Rendering Search Form!");
   return (
     <>
       <StyledSearchForm onSubmit={onSearchSubmit}>
@@ -194,6 +207,12 @@ const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => {
       </StyledSearchForm>
     </>
   );
+});
+
+const getSumComments = (stories) => {
+  console.log("C: Computing Sum");
+
+  return stories.data.reduce((result, value) => result + value.num_comments, 0);
 };
 
 /**
@@ -213,24 +232,27 @@ const App = () => {
   // (3A) fetch popular tech stories
   const API_ENDPOINT = "https://hn.algolia.com/api/v1/search?query=";
 
-  const handleSearchInput = (event) => {
+  const handleSearchInput = React.useCallback((event) => {
     setSearchTerm(event.target.value);
-  };
+  }, [setSearchTerm]);
 
   /** Make a new `url` state and a function to update it */
   const [url, setUrl] = React.useState(`${API_ENDPOINT}${searchTerm}`);
 
-  const handleSearchSubmit = (event) => {
+  const handleSearchSubmit = React.useCallback((event) => {
     setUrl(`${API_ENDPOINT}${searchTerm}`);
     event.preventDefault();
-  };
+  }, [searchTerm]);
 
-  const handleRemoveStory = (item) => {
+  /** Use a Callback so it only re-renders if one of its dependencies
+   * in the dependency array changes
+   */
+  const handleRemoveStory = React.useCallback((item) => {
     dispatchStories({
       type: TypeSetEnum.REMOVE_STORIES,
       payload: item,
     });
-  };
+  }, []);
 
   const handleFetchStories = React.useCallback(async () => {
     // This check isn't needed technically as the button is disabled,
@@ -254,6 +276,10 @@ const App = () => {
     handleFetchStories(); // (4C) invoke the callback using the useEffect() hook
   }, [handleFetchStories]); // (4D) dependency array: depends on any re-defined function handleFetchStories
 
+  console.log("B: App");
+
+  const sumComments = React.useMemo(() => getSumComments(stories), [stories]);
+
   return (
     <StyledContainer>
       <HeadlinePrimary>
@@ -267,6 +293,8 @@ const App = () => {
         onSearchInput={handleSearchInput}
         onSearchSubmit={handleSearchSubmit}
       />
+
+      <p>Total number of comments: {sumComments}</p>
 
       {stories.isError && <p>Cannot retrieve stories data.</p>}
 
