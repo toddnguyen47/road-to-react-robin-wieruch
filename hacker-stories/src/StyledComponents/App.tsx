@@ -243,6 +243,14 @@ const storiesReducer = (state: StoriesState, action: StoriesAction) => {
   }
 };
 
+const getSumComments = (storiesState: StoriesState): number => {
+  const initCommentValue = 0;
+  return storiesState.data.reduce(
+    (result, value) => result + value.num_comments,
+    initCommentValue
+  );
+};
+
 const SearchForm = ({
   searchTerm,
   onSearchInput,
@@ -278,10 +286,12 @@ const App = () => {
 
   // const [stories, setStories] = React.useState([]);
   const [stories, dispatchStories] = React.useReducer(storiesReducer, {
-    data: [],
+    data: [] as Story[],
     isLoading: false,
     isError: false,
   });
+
+  const sumOfStoriesComments = getSumComments(stories);
 
   // (3A) fetch popular tech stories
   const API_ENDPOINT = "https://hn.algolia.com/api/v1/search?query=";
@@ -340,6 +350,8 @@ const App = () => {
         onSearchInput={handleSearchInput}
         onSearchSubmit={handleSearchSubmit}
       />
+
+      <p>The sum of comments is: {sumOfStoriesComments}</p>
 
       {stories.isError && <p>Cannot retrieve stories data.</p>}
 
