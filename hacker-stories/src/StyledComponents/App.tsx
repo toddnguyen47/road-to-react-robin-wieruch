@@ -1,35 +1,104 @@
 import React from "react";
 import axios from "axios";
-import styled from "styled-components";
+import styled, { StyledProps } from "styled-components";
 
 import { ReactComponent as Check } from "../images/check.svg";
 
-// CONSTANTS
-const TypeSetEnum = {
-  // Do not start enum at 0 because of JavaScript's strange equality comparison
-  // when it comes to 0
-  REMOVE_STORIES: 1,
-  STORIES_FETCH_INIT: 2,
-  STORIES_FETCH_SUCCESS: 3,
-  STORIES_FETCH_FAILURE: 4,
-};
-
+// o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
+//   CONSTANTS
+// o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
 const title = "React";
 const welcome = {
   greeting: "Hey",
   title: title,
 };
 
-/**
- *
- * @param {String} title
- */
-function getTitle(title) {
+// o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
+//   TYPE & INTERFACE DECLARATIONS
+// o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
+type Story = {
+  objectID: string;
+  url: string;
+  title: string;
+  author: string;
+  num_comments: number;
+  points: number;
+};
+
+type Stories = Array<Story>;
+
+type OnRemoveItem = (item: Story) => void;
+
+type InputWithLabelProps = {
+  id: string;
+  type?: string;
+  value: string;
+  onInputChanged: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  outputString: string;
+  isFocused?: boolean;
+  children: React.ReactNode;
+};
+
+type ItemProps = {
+  item: Story;
+  onRemoveItem: OnRemoveItem;
+};
+
+type ListProps = {
+  list: Stories;
+  onRemoveItem: OnRemoveItem;
+};
+
+type SearchFormProps = {
+  searchTerm: string;
+  onSearchInput: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onSearchSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+};
+
+interface StoriesFetchInitAction {
+  type: "STORIES_FETCH_INIT";
+}
+
+interface StoriesFetchSuccessAction {
+  type: "STORIES_FETCH_SUCCESS";
+  payload: Stories;
+}
+
+interface StoriesFetchFailureAction {
+  type: "STORIES_FETCH_FAILURE";
+}
+
+interface StoriesRemoveAction {
+  type: "STORIES_REMOVE";
+  payload: Story;
+}
+
+type StoriesState = {
+  data: Stories;
+  isLoading: boolean;
+  isError: boolean;
+};
+
+type StoriesAction =
+  | StoriesFetchInitAction
+  | StoriesFetchSuccessAction
+  | StoriesFetchFailureAction
+  | StoriesRemoveAction;
+
+/** Ref: https://stackoverflow.com/a/60662122 */
+type StyledColumnProps = StyledProps<{
+  width?: number;
+}>;
+
+// o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
+//   FUNCTIONS
+// o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
+function getTitle(title: string) {
   return "| " + title + " |";
 }
 
 // const List = (props) => {
-function List({ list, onRemoveItem }) {
+function List({ list, onRemoveItem }: ListProps) {
   return (
     <>
       <StyledItem>
@@ -51,7 +120,7 @@ function List({ list, onRemoveItem }) {
   );
 }
 
-const Item = ({ item, onRemoveItem }) => {
+const Item = ({ item, onRemoveItem }: ItemProps) => {
   return (
     <StyledItem>
       <StyledColumn style={{ width: "40%" }}>
@@ -81,9 +150,9 @@ const InputWithLabel = ({
   outputString,
   isFocused,
   children,
-}) => {
+}: InputWithLabelProps) => {
   // (2A) create an inputRef
-  const inputRef = React.useRef();
+  const inputRef = React.useRef<HTMLInputElement>(null!);
 
   // (2C) Go into React's lifecycle. Perform the focus when the element renders or
   // when its dependencies change
@@ -121,11 +190,11 @@ const InputWithLabel = ({
 
 /**
  * Store a vallue in localStorage.
- * @param {String} key
- * @param {*} initialState
- * @returns [String, Function]
  */
-const useSemiPersistentState = (key, initialState) => {
+const useSemiPersistentState = (
+  key: string,
+  initialState: string
+): [string, (newValue: string) => void] => {
   const [value, setValue] = React.useState(
     localStorage.getItem(key) || initialState
   );
@@ -141,29 +210,29 @@ const useSemiPersistentState = (key, initialState) => {
   return [value, setValue];
 };
 
-const storiesReducer = (state, action) => {
+const storiesReducer = (state: StoriesState, action: StoriesAction) => {
   switch (action.type) {
-    case TypeSetEnum.REMOVE_STORIES:
+    case "STORIES_REMOVE":
       return {
         ...state,
         data: state.data.filter(
           (story) => action.payload.objectID !== story.objectID
         ),
       };
-    case TypeSetEnum.STORIES_FETCH_INIT:
+    case "STORIES_FETCH_INIT":
       return {
         ...state,
         isLoading: true,
         isError: false,
       };
-    case TypeSetEnum.STORIES_FETCH_SUCCESS:
+    case "STORIES_FETCH_SUCCESS":
       return {
         ...state,
         isLoading: false,
         isError: false,
         data: action.payload,
       };
-    case TypeSetEnum.STORIES_FETCH_FAILURE:
+    case "STORIES_FETCH_FAILURE":
       return {
         ...state,
         isLoading: false,
@@ -174,7 +243,11 @@ const storiesReducer = (state, action) => {
   }
 };
 
-const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => {
+const SearchForm = ({
+  searchTerm,
+  onSearchInput,
+  onSearchSubmit,
+}: SearchFormProps) => {
   return (
     <>
       <StyledSearchForm onSubmit={onSearchSubmit}>
@@ -213,21 +286,21 @@ const App = () => {
   // (3A) fetch popular tech stories
   const API_ENDPOINT = "https://hn.algolia.com/api/v1/search?query=";
 
-  const handleSearchInput = (event) => {
+  const handleSearchInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
 
   /** Make a new `url` state and a function to update it */
   const [url, setUrl] = React.useState(`${API_ENDPOINT}${searchTerm}`);
 
-  const handleSearchSubmit = (event) => {
+  const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     setUrl(`${API_ENDPOINT}${searchTerm}`);
     event.preventDefault();
   };
 
-  const handleRemoveStory = (item) => {
+  const handleRemoveStory = (item: Story) => {
     dispatchStories({
-      type: TypeSetEnum.REMOVE_STORIES,
+      type: "STORIES_REMOVE",
       payload: item,
     });
   };
@@ -237,16 +310,16 @@ const App = () => {
     // but it does not hurt to check
     if (!url) return;
 
-    dispatchStories({ type: TypeSetEnum.STORIES_FETCH_INIT });
+    dispatchStories({ type: "STORIES_FETCH_INIT" });
     try {
       const result = await axios.get(url);
       console.log("Fetching!");
       dispatchStories({
-        type: TypeSetEnum.STORIES_FETCH_SUCCESS,
+        type: "STORIES_FETCH_SUCCESS",
         payload: result.data.hits,
       });
     } catch {
-      dispatchStories({ type: TypeSetEnum.STORIES_FETCH_FAILURE });
+      dispatchStories({ type: "STORIES_FETCH_FAILURE" });
     }
   }, [url]); // (4E) when `searchTerm` changes
 
@@ -342,7 +415,7 @@ const StyledColumn = styled.div`
   }
 
   /* Passing in props! */
-  width: ${(props) => props.width};
+  width: ${(props: StyledColumnProps) => props.width};
 `;
 
 const StyledContainer = styled.div`
