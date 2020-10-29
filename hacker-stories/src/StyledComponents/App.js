@@ -62,7 +62,7 @@ const Item = ({ item, onRemoveItem }) => {
       <StyledColumn style={{ width: "10%" }}>{item.points}</StyledColumn>
       <StyledColumn style={{ width: "10%" }}>
         <StyledButtonSmall type="button" onClick={() => onRemoveItem(item)}>
-          <Check width="1.8rem" height="1.8rem" />
+          <Check width="18" height="18" />
         </StyledButtonSmall>
       </StyledColumn>
     </StyledItem>
@@ -273,8 +273,8 @@ const App = () => {
       {stories.isLoading ? (
         <p>Loading...</p>
       ) : (
-          <List list={stories.data} onRemoveItem={handleRemoveStory} />
-        )}
+        <List list={stories.data} onRemoveItem={handleRemoveStory} />
+      )}
 
       <hr />
       <footer>
