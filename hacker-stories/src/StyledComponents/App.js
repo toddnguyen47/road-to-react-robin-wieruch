@@ -54,7 +54,9 @@ const List = React.memo(({ list, onRemoveItem }) => {
   );
 });
 
-const Item = ({ item, onRemoveItem }) => {
+const Item = React.memo(({ item, onRemoveItem }) => {
+  console.log("Rendering Item");
+
   return (
     <StyledItem>
       <StyledColumn style={{ width: "40%" }}>
@@ -70,7 +72,7 @@ const Item = ({ item, onRemoveItem }) => {
       </StyledColumn>
     </StyledItem>
   );
-};
+});
 
 // /** Passing in a full props javascript object */
 // const Search = (props) => {
