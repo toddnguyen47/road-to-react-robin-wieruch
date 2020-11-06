@@ -378,6 +378,7 @@ const App = () => {
 };
 
 export default App;
+export { Item };
 
 // o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
 //   STYLED COMPONENTS
