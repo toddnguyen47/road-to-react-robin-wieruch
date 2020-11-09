@@ -372,3 +372,5 @@ const App = () => {
 };
 
 export default App;
+
+export { Item };

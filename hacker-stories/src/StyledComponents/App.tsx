@@ -417,7 +417,7 @@ const StyledButtonLarge = styled(StyledButton)`
   padding: 1rem;
 `;
 
-const StyledColumn = styled.div`
+const StyledColumn = styled.span`
   padding: 0rem 0.5rem;
   white-space: nowrap;
   overflow: hidden;
