@@ -20,12 +20,18 @@ describe("Item", () => {
     objectID: 0,
   };
 
-  it("renders all properties", () => {
-    let component;
-    renderer.act(() => {
-      component = renderer.create(<Item item={mockItem} />);
-    });
+  let component;
+  const handleRemoveItem = jest.fn(); // Create a mock function
 
+  beforeEach(() => {
+    renderer.act(() => {
+      component = renderer.create(
+        <Item item={mockItem} onRemoveItem={handleRemoveItem} />
+      );
+    });
+  });
+
+  it("renders all properties", () => {
     // expect(component.root.findByType("a").props.href).toEqual(
     //   "https://reactjs.org/"
     // );
@@ -42,12 +48,6 @@ describe("Item", () => {
   });
 
   it("calls onRemoveItem() on button click", () => {
-    const handleRemoveItem = jest.fn(); // Create a mock function
-
-    const component = renderer.create(
-      <Item item={mockItem} onRemoveItem={handleRemoveItem} />
-    );
-
     component.root.findByType("button").props.onClick();
 
     expect(handleRemoveItem).toHaveBeenCalledTimes(1);
