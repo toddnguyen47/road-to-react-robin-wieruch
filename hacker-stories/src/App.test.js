@@ -4,6 +4,9 @@ import renderer from "react-test-renderer";
 // import App, { Item } from "./StyledComponents/App.tsx";
 import App, { InputWithLabel, Item, List, SearchForm } from "./App.tsx";
 
+import axios from "axios";
+jest.mock("axios");
+
 // test("renders learn react link", () => {
 //   const { getByText } = render(<App />);
 //   const linkElement = getByText(/learn react/i);
@@ -124,5 +127,43 @@ describe("SearchForm", () => {
       <SearchForm {...searchFormProps} searchTerm={emptySearchTerm} />
     );
     expect(component.root.findByType("button").props.disabled).toBeTruthy();
+  });
+});
+
+describe("App", () => {
+  it("succeeds fetching data with a list", async () => {
+    const mockList = [
+      {
+        title: "React",
+        url: "https://reactjs.org/",
+        author: "Jordan Walke",
+        num_comments: 3,
+        points: 4,
+        objectID: 0,
+      },
+      {
+        title: "Redux",
+        url: "https://redux.js.org/",
+        author: "Dan Abramov, Andrew Clark",
+        num_comments: 2,
+        points: 5,
+        objectID: 1,
+      },
+    ];
+
+    // Mock our returned promise from axios
+    const returnedPromise = Promise.resolve({
+      data: {
+        hits: mockList,
+      },
+    });
+    axios.get.mockImplementationOnce(() => returnedPromise);
+
+    let component;
+    await renderer.act(async () => {
+      component = renderer.create(<App />);
+    });
+
+    expect(component.root.findByType(List).props.list).toEqual(mockList);
   });
 });
