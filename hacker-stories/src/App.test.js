@@ -117,4 +117,12 @@ describe("SearchForm", () => {
     expect(searchFormProps.onSearchSubmit).toHaveBeenCalledTimes(1);
     expect(searchFormProps.onSearchSubmit).toHaveBeenCalledWith(pseudoEvent);
   });
+
+  it("disables button and prevents submit on empty search term", () => {
+    const emptySearchTerm = "";
+    component.update(
+      <SearchForm {...searchFormProps} searchTerm={emptySearchTerm} />
+    );
+    expect(component.root.findByType("button").props.disabled).toBeTruthy();
+  });
 });
