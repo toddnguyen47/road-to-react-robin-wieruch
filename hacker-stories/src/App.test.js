@@ -98,6 +98,7 @@ describe("SearchForm", () => {
 
   it("renders the input value with its field", () => {
     const value = component.root.findByType(InputWithLabel).props.value;
+    // const value = component.root.findByType("input").props.value;
     expect(value).toEqual("React");
   });
 });
