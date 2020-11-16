@@ -2,7 +2,7 @@ import React from "react";
 // import { render } from "@testing-library/react";
 import renderer from "react-test-renderer";
 // import App, { Item } from "./StyledComponents/App.tsx";
-import App, { Item, List } from "./App.tsx";
+import App, { InputWithLabel, Item, List, SearchForm } from "./App.tsx";
 
 // test("renders learn react link", () => {
 //   const { getByText } = render(<App />);
@@ -80,5 +80,24 @@ describe("List", () => {
   it("Renders 2 Items. Note that the rendered objects are ITEMS, not LIST", () => {
     const component = renderer.create(<List list={mockList} />);
     expect(component.root.findAllByType(Item).length).toEqual(2);
+  });
+});
+
+describe("SearchForm", () => {
+  const searchFormProps = {
+    searchTerm: "React",
+    onSearchInput: jest.fn(),
+    onSearchSubmit: jest.fn(),
+  };
+
+  let component;
+
+  beforeEach(() => {
+    component = renderer.create(<SearchForm {...searchFormProps} />);
+  });
+
+  it("renders the input value with its field", () => {
+    const value = component.root.findByType(InputWithLabel).props.value;
+    expect(value).toEqual("React");
   });
 });

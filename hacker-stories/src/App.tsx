@@ -373,4 +373,4 @@ const App = () => {
 
 export default App;
 
-export { Item, List };
+export { InputWithLabel, Item, List, SearchForm };
