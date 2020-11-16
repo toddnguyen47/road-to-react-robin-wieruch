@@ -40,4 +40,19 @@ describe("Item", () => {
       component.root.findAllByProps({ children: "Jordan Walke" }).length
     ).toEqual(1);
   });
+
+  it("calls onRemoveItem() on button click", () => {
+    const handleRemoveItem = jest.fn(); // Create a mock function
+
+    const component = renderer.create(
+      <Item item={mockItem} onRemoveItem={handleRemoveItem} />
+    );
+
+    component.root.findByType("button").props.onClick();
+
+    expect(handleRemoveItem).toHaveBeenCalledTimes(1);
+    expect(handleRemoveItem).toHaveBeenCalledWith(mockItem);
+
+    expect(component.root.findAllByType(Item).length).toEqual(1);
+  });
 });
