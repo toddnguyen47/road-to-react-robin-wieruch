@@ -5,6 +5,7 @@ import renderer from "react-test-renderer";
 import App, { InputWithLabel, Item, List, SearchForm } from "./App.tsx";
 
 import axios from "axios";
+import { promises } from "fs";
 jest.mock("axios");
 
 // test("renders learn react link", () => {
@@ -165,5 +166,21 @@ describe("App", () => {
     });
 
     expect(component.root.findByType(List).props.list).toEqual(mockList);
+  });
+
+  it("fails fetching data with a list, testing error message", async () => {
+    const mockPromise = Promise.reject;
+    axios.get.mockImplementationOnce(() => returnedPromise);
+
+    let component;
+    await renderer.act(async () => {
+      component = renderer.create(<App />);
+    });
+
+    expect(
+      component.root.findAllByProps({
+        children: "Cannot retrieve stories data.",
+      }).length
+    ).toEqual(1);
   });
 });
