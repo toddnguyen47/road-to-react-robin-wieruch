@@ -1,8 +1,11 @@
 import React from "react";
 import axios from "axios";
-import classnames from "classnames";
 
 import styles from "./App.module.css";
+import List from "./modules/List";
+import { Stories, Story } from "./modules/Stories";
+import InputWithLabel from "./modules/InputWithLabel";
+import SearchForm from "./modules/SearchForm";
 
 // o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
 //   CONSTANTS
@@ -16,56 +19,9 @@ const welcome = {
 // o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
 //   TYPE & INTERFACE DECLARATIONS
 // o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-type Story = {
-  objectID: string;
-  url: string;
-  title: string;
-  author: string;
-  num_comments: number;
-  points: number;
-};
-
-type Stories = Array<Story>;
-
-type OnRemoveItem = (item: Story) => void;
-
-type InputWithLabelProps = {
-  id: string;
-  type?: string;
-  value: string;
-  onInputChanged: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  outputString: string;
-  isFocused?: boolean;
-  children: React.ReactNode;
-};
-
-type ItemProps = {
-  item: Story;
-  onRemoveItem: OnRemoveItem;
-};
-
-type ListProps = {
-  list: Stories;
-  onRemoveItem: OnRemoveItem;
-};
-
-type SearchFormProps = {
-  searchTerm: string;
-  onSearchInput: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onSearchSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
-};
-
-interface StoriesFetchInitAction {
-  type: "STORIES_FETCH_INIT";
-}
-
 interface StoriesFetchSuccessAction {
   type: "STORIES_FETCH_SUCCESS";
   payload: Stories;
-}
-
-interface StoriesFetchFailureAction {
-  type: "STORIES_FETCH_FAILURE";
 }
 
 interface StoriesRemoveAction {
@@ -78,6 +34,14 @@ type StoriesState = {
   isLoading: boolean;
   isError: boolean;
 };
+
+interface StoriesFetchInitAction {
+  type: "STORIES_FETCH_INIT";
+}
+
+interface StoriesFetchFailureAction {
+  type: "STORIES_FETCH_FAILURE";
+}
 
 type StoriesAction =
   | StoriesFetchInitAction
@@ -93,103 +57,8 @@ function getTitle(title: string) {
   return "| " + title + " |";
 }
 
-// const List = (props) => {
-function List({ list, onRemoveItem }: ListProps) {
-  return (
-    <>
-      <div className={styles["item"]}>
-        <span style={{ width: "40%" }}>URL</span>
-        <span style={{ width: "30%" }}>Author</span>
-        <span style={{ width: "10%" }}># Comments</span>
-        <span style={{ width: "10%" }}>Points</span>
-        <span style={{ width: "10%" }}></span>
-      </div>
-
-      <div>
-        {list.map((item) => {
-          return (
-            <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
-          );
-        })}
-      </div>
-    </>
-  );
-}
-
-const Item = ({ item, onRemoveItem }: ItemProps) => {
-  return (
-    <div className={styles["item"]}>
-      <span style={{ width: "40%" }}>
-        <a href={item.url}>{item.title}</a>
-      </span>
-      <span style={{ width: "30%" }}>{item.author}</span>
-      <span style={{ width: "10%" }}>{item.num_comments}</span>
-      <span style={{ width: "10%" }}>{item.points}</span>
-      <span style={{ width: "10%" }}>
-        <button
-          type="button"
-          className={`${styles["button"]} ${styles["button__small"]}`}
-          onClick={() => onRemoveItem(item)}
-        >
-          Dismiss
-        </button>
-      </span>
-    </div>
-  );
-};
-
 // /** Passing in a full props javascript object */
 // const Search = (props) => {
-
-/** Destructuring in the function parameter! */
-const InputWithLabel = ({
-  id,
-  type = "text",
-  value,
-  onInputChanged,
-  outputString,
-  isFocused,
-  children,
-}: InputWithLabelProps) => {
-  // (2A) create an inputRef
-  const inputRef = React.useRef<HTMLInputElement>(null!);
-
-  // (2C) Go into React's lifecycle. Perform the focus when the element renders or
-  // when its dependencies change
-  React.useEffect(() => {
-    // Check if the `.current` property exists
-    if (isFocused && inputRef.current) {
-      // (2D) Since `inputRef` is passed into the `input` element as the `ref` attribute,
-      // `.current` property gives us access to that `input` element
-      inputRef.current.focus();
-      console.log("Focusing!");
-    }
-  }, [isFocused]);
-
-  // (1B) Use the callback function
-  return (
-    <>
-      <label htmlFor={id} className={styles["label"]}>
-        {children}
-      </label>
-      <input
-        /** (2B) The `inputRef` variable is passed to JSX's reserved `ref` attribute.
-         * The element instance is assigned to the mutable `current` property
-         */
-        ref={inputRef}
-        id={id}
-        type={type}
-        onChange={onInputChanged}
-        value={value}
-        className={styles["input"]}
-      />
-
-      <p>
-        {outputString} <strong>'{value}'</strong>
-      </p>
-    </>
-  );
-};
 
 /**
  * Store a value in localStorage.
@@ -251,36 +120,6 @@ const getSumComments = (storiesState: StoriesState): number => {
   return storiesState.data.reduce(
     (result, value) => result + value.num_comments,
     initCommentValue
-  );
-};
-
-const SearchForm = ({
-  searchTerm,
-  onSearchInput,
-  onSearchSubmit,
-}: SearchFormProps) => {
-  return (
-    <>
-      <form onSubmit={onSearchSubmit} className={styles["searchForm"]}>
-        <InputWithLabel
-          id="search"
-          value={searchTerm}
-          onInputChanged={onSearchInput}
-          isFocused={true}
-          outputString="The Search Term is: "
-        >
-          <strong>Search: &nbsp;</strong>
-        </InputWithLabel>
-
-        <button
-          type="submit"
-          disabled={!searchTerm}
-          className={classnames(styles["button"], styles["button__large"])}
-        >
-          Submit
-        </button>
-      </form>
-    </>
   );
 };
 
@@ -373,4 +212,4 @@ const App = () => {
 
 export default App;
 
-export { InputWithLabel, Item, List, SearchForm };
+export { InputWithLabel, List, SearchForm };
