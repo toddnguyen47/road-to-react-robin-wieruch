@@ -1,11 +1,17 @@
 import React from "react";
 // import { render } from "@testing-library/react";
 import renderer from "react-test-renderer";
-// import App, { Item } from "./StyledComponents/App.tsx";
-import App, { InputWithLabel, Item, List, SearchForm } from "./App.tsx";
+
+import App from "./App";
+
+import { Item } from "./components/List/Item";
+import List from "./components/List";
+
+import SearchForm from "./components/SearchForm";
+import InputWithLabel from "./components/InputWithLabel";
 
 import axios from "axios";
-import { promises } from "fs";
+// import { promises } from "fs";
 jest.mock("axios");
 
 // test("renders learn react link", () => {
@@ -16,15 +22,15 @@ jest.mock("axios");
 
 describe("Item", () => {
   const mockItem = {
-    title: "React",
+    objectID: 0,
     url: "https://reactjs.org/",
+    title: "React",
     author: "Jordan Walke",
     num_comments: 3,
     points: 4,
-    objectID: 0,
   };
 
-  let component;
+  let component: any;
   const handleRemoveItem = jest.fn(); // Create a mock function
 
   beforeEach(() => {
@@ -86,8 +92,11 @@ describe("List", () => {
     },
   ];
 
+  const handleRemoveItem = jest.fn(); // Create a mock function
   it("Renders 2 Items. Note that the rendered objects are ITEMS, not LIST", () => {
-    const component = renderer.create(<List list={mockList} />);
+    const component = renderer.create(
+      <List list={mockList} onRemoveItem={handleRemoveItem} />
+    );
     expect(component.root.findAllByType(Item).length).toEqual(2);
   });
 });
@@ -99,7 +108,7 @@ describe("SearchForm", () => {
     onSearchSubmit: jest.fn(),
   };
 
-  let component;
+  let component: any;
 
   beforeEach(() => {
     component = renderer.create(<SearchForm {...searchFormProps} />);
@@ -137,47 +146,49 @@ describe("SearchForm", () => {
 });
 
 describe("App", () => {
-  it("succeeds fetching data with a list", async () => {
-    const mockList = [
-      {
-        title: "React",
-        url: "https://reactjs.org/",
-        author: "Jordan Walke",
-        num_comments: 3,
-        points: 4,
-        objectID: 0,
-      },
-      {
-        title: "Redux",
-        url: "https://redux.js.org/",
-        author: "Dan Abramov, Andrew Clark",
-        num_comments: 2,
-        points: 5,
-        objectID: 1,
-      },
-    ];
+  const _mockList = [
+    {
+      objectID: 0,
+      url: "https://reactjs.org/",
+      title: "React",
+      author: "Jordan Walke",
+      num_comments: 3,
+      points: 4,
+    },
+    {
+      objectID: 1,
+      url: "https://redux.js.org/",
+      title: "Redux",
+      author: "Dan Abramov, Andrew Clark",
+      num_comments: 2,
+      points: 5,
+    },
+  ];
 
+  const _mockedAxios = axios as jest.Mocked<typeof axios>;
+
+  it("succeeds fetching data with a list", async () => {
     // Mock our returned promise from axios
     const returnedPromise = Promise.resolve({
       data: {
-        hits: mockList,
+        hits: _mockList,
       },
     });
-    axios.get.mockImplementationOnce(() => returnedPromise);
+    _mockedAxios.get.mockImplementationOnce(() => returnedPromise);
 
-    let component;
+    let component: any;
     await renderer.act(async () => {
       component = renderer.create(<App />);
     });
 
-    expect(component.root.findByType(List).props.list).toEqual(mockList);
+    expect(component.root.findByType(List).props.list).toEqual(_mockList);
   });
 
   it("fails fetching data with a list, testing error message", async () => {
-    const mockPromise = Promise.reject;
-    axios.get.mockImplementationOnce(() => returnedPromise);
+    const rejectedPromise = Promise.reject();
+    _mockedAxios.get.mockImplementationOnce(() => rejectedPromise);
 
-    let component;
+    let component: any;
     await renderer.act(async () => {
       component = renderer.create(<App />);
     });

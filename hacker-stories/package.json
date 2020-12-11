@@ -39,7 +39,8 @@
     ]
   },
   "devDependencies": {
-    "@types/jest": "^26.0.15",
+    "@types/jest": "^26.0.19",
+    "@types/react-test-renderer": "^17.0.0",
     "react-test-renderer": "^17.0.1"
   }
 }
