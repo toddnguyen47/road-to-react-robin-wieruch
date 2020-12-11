@@ -4,7 +4,6 @@ import axios from "axios";
 import styles from "./App.module.css";
 import List from "./components/List";
 import { Stories, Story } from "./components/List/Stories";
-import InputWithLabel from "./components/InputWithLabel";
 import SearchForm from "./components/SearchForm";
 
 // o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
@@ -56,9 +55,6 @@ type StoriesAction =
 function getTitle(title: string) {
   return "| " + title + " |";
 }
-
-// /** Passing in a full props javascript object */
-// const Search = (props) => {
 
 /**
  * Store a value in localStorage.
@@ -211,5 +207,3 @@ const App = () => {
 };
 
 export default App;
-
-export { InputWithLabel, List, SearchForm };
