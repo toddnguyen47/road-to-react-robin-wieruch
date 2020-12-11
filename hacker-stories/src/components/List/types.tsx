@@ -1,4 +1,4 @@
-import { Story, Stories } from "../Stories";
+import { Story, Stories } from "./Stories";
 
 type OnRemoveItem = (item: Story) => void;
 

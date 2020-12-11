@@ -3,7 +3,7 @@ import axios from "axios";
 
 import styles from "./App.module.css";
 import List from "./components/List";
-import { Stories, Story } from "./components/Stories";
+import { Stories, Story } from "./components/List/Stories";
 import InputWithLabel from "./components/InputWithLabel";
 import SearchForm from "./components/SearchForm";
 

@@ -1,14 +1,11 @@
 import React from "react";
 import classnames from "classnames";
 
-import styles from "../App.module.css";
-import InputWithLabel from "./InputWithLabel";
+import sharedStyles from "../shared/style.module.css";
+import styles from "./style.module.css";
 
-type SearchFormProps = {
-  searchTerm: string;
-  onSearchInput: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onSearchSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
-};
+import InputWithLabel from "../InputWithLabel";
+import { SearchFormProps } from "./types";
 
 const SearchForm = ({
   searchTerm,
@@ -31,7 +28,10 @@ const SearchForm = ({
         <button
           type="submit"
           disabled={!searchTerm}
-          className={classnames(styles["button"], styles["button__large"])}
+          className={classnames(
+            sharedStyles["button"],
+            sharedStyles["button__large"]
+          )}
         >
           Submit
         </button>
