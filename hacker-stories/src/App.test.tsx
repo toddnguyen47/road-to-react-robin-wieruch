@@ -148,35 +148,33 @@ describe("SearchForm", () => {
 describe("App", () => {
   const _mockList = [
     {
-      title: "React",
+      objectID: 0,
       url: "https://reactjs.org/",
+      title: "React",
       author: "Jordan Walke",
       num_comments: 3,
       points: 4,
-      objectID: 0,
     },
     {
-      title: "Redux",
+      objectID: 1,
       url: "https://redux.js.org/",
+      title: "Redux",
       author: "Dan Abramov, Andrew Clark",
       num_comments: 2,
       points: 5,
-      objectID: 1,
     },
   ];
 
-  // Mock our returned promise from axios
-  const _returnedPromise = Promise.resolve({
-    data: {
-      hits: _mockList,
-    },
-  });
-
-  const _rejectedPromise = Promise.reject();
   const _mockedAxios = axios as jest.Mocked<typeof axios>;
 
   it("succeeds fetching data with a list", async () => {
-    _mockedAxios.get.mockImplementationOnce(() => _returnedPromise);
+    // Mock our returned promise from axios
+    const returnedPromise = Promise.resolve({
+      data: {
+        hits: _mockList,
+      },
+    });
+    _mockedAxios.get.mockImplementationOnce(() => returnedPromise);
 
     let component: any;
     await renderer.act(async () => {
@@ -187,7 +185,8 @@ describe("App", () => {
   });
 
   it("fails fetching data with a list, testing error message", async () => {
-    _mockedAxios.get.mockImplementationOnce(() => _rejectedPromise);
+    const rejectedPromise = Promise.reject();
+    _mockedAxios.get.mockImplementationOnce(() => rejectedPromise);
 
     let component: any;
     await renderer.act(async () => {
