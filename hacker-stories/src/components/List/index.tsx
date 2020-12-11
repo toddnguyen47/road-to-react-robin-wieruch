@@ -1,19 +1,8 @@
 import React from "react";
 
-import styles from "../App.module.css";
-import { Story, Stories } from "./Stories";
-
-type OnRemoveItem = (item: Story) => void;
-
-type ListProps = {
-  list: Stories;
-  onRemoveItem: OnRemoveItem;
-};
-
-type ItemProps = {
-  item: Story;
-  onRemoveItem: OnRemoveItem;
-};
+import styles from "./style.module.css";
+import sharedStyles from "../shared/style.module.css";
+import { ItemProps, ListProps } from "./types";
 
 const Item = ({ item, onRemoveItem }: ItemProps) => {
   return (
@@ -27,7 +16,7 @@ const Item = ({ item, onRemoveItem }: ItemProps) => {
       <span style={{ width: "10%" }}>
         <button
           type="button"
-          className={`${styles["button"]} ${styles["button__small"]}`}
+          className={`${sharedStyles["button"]} ${sharedStyles["button__small"]}`}
           onClick={() => onRemoveItem(item)}
         >
           Dismiss

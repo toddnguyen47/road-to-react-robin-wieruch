@@ -2,10 +2,10 @@ import React from "react";
 import axios from "axios";
 
 import styles from "./App.module.css";
-import List from "./modules/List";
-import { Stories, Story } from "./modules/Stories";
-import InputWithLabel from "./modules/InputWithLabel";
-import SearchForm from "./modules/SearchForm";
+import List from "./components/List";
+import { Stories, Story } from "./components/Stories";
+import InputWithLabel from "./components/InputWithLabel";
+import SearchForm from "./components/SearchForm";
 
 // o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
 //   CONSTANTS

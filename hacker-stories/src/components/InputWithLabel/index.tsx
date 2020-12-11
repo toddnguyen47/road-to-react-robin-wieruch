@@ -1,6 +1,6 @@
 import React from "react";
 
-import styles from "./styles.module.css";
+import styles from "./style.module.css";
 import { InputWithLabelProps } from "./types";
 
 const InputWithLabel = ({

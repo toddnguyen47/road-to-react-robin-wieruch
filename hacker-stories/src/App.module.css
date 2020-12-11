@@ -48,28 +48,6 @@ body {
   font-size: 1.6rem;
 }
 
-.button {
-  background: transparent;
-  border: 0.1rem solid #171212;
-  padding: 0.5rem;
-  cursor: pointer;
-
-  transition: all 0.1s ease-in;
-}
-
-.button:hover {
-  background: #171212;
-  color: #ffffff;
-}
-
-.button__small {
-  padding: 0.5rem;
-}
-
-.button__large {
-  padding: 1rem;
-}
-
 .container {
   /* height: 100vw; */
   padding: 2rem;
@@ -91,24 +69,6 @@ body {
   border-bottom: 0.1rem solid #171212;
   background-color: transparent;
   font-size: 2.4rem;
-}
-
-.item {
-  display: flex;
-  align-items: center;
-  padding-bottom: 0.5rem;
-}
-
-.item > span {
-  padding: 0rem 0.5rem;
-  white-space: nowrap;
-  overflow: hidden;
-  /* white-space: nowrap; */
-  text-overflow: ellipsis;
-}
-
-.item > span > a {
-  color: inherit;
 }
 
 .searchForm {

@@ -1,0 +1,17 @@
+.item {
+  display: flex;
+  align-items: center;
+  padding-bottom: 0.5rem;
+}
+
+.item > span {
+  padding: 0rem 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  /* white-space: nowrap; */
+  text-overflow: ellipsis;
+}
+
+.item > span > a {
+  color: inherit;
+}
